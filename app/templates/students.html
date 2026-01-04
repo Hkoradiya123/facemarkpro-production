@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #4a90e2;
+            --card-bg: #f5f6fa;
+            --text-color: #333333;
+            --sidebar-bg: #f8f9fa;
+            --input-bg: #fff;
+            --input-border: #e0e0e0;
+            --btn-bg: #1976d2;
+            --btn-bg-upload: #00b894;
+            --btn-text: #fff;
+            --btn-hover: #1251a3;
+            --btn-upload-hover: #009e74;
+            --alert-bg: rgba(79,172,254,0.09);
+            --alert-text: #1976d2;
+            --success-bg: #e8f5e9;
+            --success-border: #4caf50;
+            --error-bg: #ffebee;
+            --error-border: #f44336;
+            --warning-bg: #fff3e0;
+            --warning-border: #ff9800;
+        }
+        body.dark {
+            --card-bg: #23272f;
+            --text-color: #e0e0e0;
+            --sidebar-bg: #181c24;
+            --input-bg: #23272f;
+            --input-border: #333;
+            --btn-bg: #1565c0;
+            --btn-bg-upload: #00b894;
+            --btn-text: #fff;
+            --btn-hover: #0d47a1;
+            --btn-upload-hover: #009e74;
+            --alert-bg: #223a5f;
+            --alert-text: #aeefff;
+            --success-bg: #1b5e20;
+            --success-border: #4caf50;
+            --error-bg: #b71c1c;
+            --error-border: #f44336;
+            --warning-bg: #e65100;
+            --warning-border: #ff9800;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        /* Sidebar Styles */
+        /* Modern Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            padding: 24px 20px;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08), 0 0 40px rgba(0, 0, 0, 0.04);
+            border-right: 1px solid rgba(0, 0, 0, 0.06);
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        body.dark .sidebar {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.2);
+            border-right-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-section {
+            text-align: center;
+            padding: 24px 0 28px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+
+        body.dark .profile-section {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-photo {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .profile-photo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+        }
+
+        body.dark .profile-photo {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-section h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .nav-link:hover::before {
+            transform: scaleY(1);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            font-size: 16px;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        body.dark .nav-link i {
+            color: #94a3b8;
+        }
+
+        .nav-link:hover i {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+            transform: translateX(2px);
+        }
+
+        .nav-link.active::before {
+            transform: scaleY(1);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active i {
+            color: #ffffff !important;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 24px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark .sidebar-footer {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.text-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff !important;
+        }
+
+        .nav-link.text-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+
+        .nav-link.text-danger i {
+            color: #ffffff !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 260px;
+                padding: 20px 16px;
+            }
+
+            .nav-link {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+
+            .profile-photo {
+                width: 64px;
+                height: 64px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        body, .main-content, .container { font-size: 1.12rem; }
+        .main-content { padding: 32px 0 0 0; }
+        .container { max-width: 1100px; margin-top: 40px; background: var(--card-bg, #fff); }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        .table { font-size: 1.08rem; }
+        @media (max-width: 1100px) {
+            .container { max-width: 99vw; padding: 0 2vw; }
+            .table { font-size: 1rem; }
+        }
+        /* Remove previous custom scroll style, use widget style instead */
+        .student-list-widget.widget {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
+            height: auto;
+            margin-top: 32px;
+        }
+        .widget-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .widget-header i {
+            font-size: 1.2rem;
+            margin-right: 10px;
+            color: #4facfe;
+        }
+        .widget-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #333;
+        }
+        .widget-content.student-list {
+            max-height: 600px;
+            overflow-y: auto;
+            min-height: 100px;
+            height: 340px;
+            resize: vertical;
+            overflow: auto;
+        }
+        @media (max-width: 768px) {
+            .widget-content.student-list {
+                max-height: 400px;
+                height: 220px;
+            }
+        }
+        .resize-handle {
+            width: 100%;
+            height: 12px;
+            background: transparent;
+            cursor: ns-resize;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .resize-handle::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 4px;
+            background: #ccc;
+            border-radius: 2px;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="sidebar">
+        <div class="profile-section">
+            <img src="{{ url_for('static', filename='img/faculty.jpg') }}" alt="Profile Photo" class="profile-photo">
+            <h5>{{ faculty }}</h5>
+        </div>
+        <div class="nav-links">
+            <ul class="nav-links">
+                <li style="display: flex; align-items: center; gap: 0.5rem;">
+                  <a href="{{ url_for('faculty.dashboard') }}" class="nav-link{% if request.path == url_for('faculty.dashboard') %} active{% endif %}"><i class="fas fa-home"></i> Dashboard</a>
+                  {% if request.path == url_for('faculty.dashboard') %}
+                  <div class="icon-plus-btn" onclick="openWidgetModal()" tabindex="0" aria-label="Add Widget">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" style="display:inline-block; vertical-align:middle;">
+                      <path d="M12 5v14m-7-7h14" stroke="#1976d2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                  </div>
+                  {% endif %}
+                </li>
+                <li><a href="{{ url_for('attendance.attendance') }}" class="nav-link{% if request.path == url_for('attendance.attendance') %} active{% endif %}"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                <li><a href="{{ url_for('attendance.manual_attendance') }}" class="nav-link{% if request.path == url_for('attendance.manual_attendance') %} active{% endif %}"><i class="fas fa-user-check"></i> Manual Attendance</a></li>
+                <li><a href="{{ url_for('students.students') }}" class="nav-link{% if request.path == url_for('students.students') %} active{% endif %}"><i class="fas fa-users"></i> Students</a></li>
+                <li><a href="{{ url_for('students.register_student_face') }}" class="nav-link{% if request.path == url_for('students.register_student_face') %} active{% endif %}"><i class="fas fa-user-plus"></i> Register Face</a></li>
+                <li><a href="{{ url_for('students.face_registrations_summary') }}" class="nav-link{% if request.path == url_for('students.face_registrations_summary') %} active{% endif %}"><i class="fas fa-list"></i> Face Summary</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/logout" class="nav-link text-danger">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+            <label class="switch">
+              <input type="checkbox" class="theme-switch-checkbox">
+              <span class="slider"></span>
+            </label>            
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="container shadow rounded p-4 student-list-widget widget" style="padding:0;">
+            <div class="widget-header" style="padding: 16px 16px 0 16px;">
+                <i class="fas fa-user-graduate"></i>
+                <h2 class="widget-title mb-0" style="font-size:1.3rem;">Student List</h2>
+            </div>
+            <div class="widget-content student-list" id="studentListWidgetContent" style="padding: 0 16px 16px 16px; position: relative;">
+                <div class="table-responsive" style="margin-bottom:0;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Roll Number</th>
+                                <th>Name</th>
+                                <th>Branch</th>
+                                <th>Semester</th>
+                                <th>Section</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ student.roll_no }}</td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.branch }}</td>
+                                <td>{{ student.semester }}</td>
+                                <td>{{ student.section }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="resize-handle" id="resizeHandle"></div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+    // Custom resize logic for student list widget
+    const widgetContent = document.getElementById('studentListWidgetContent');
+    const resizeHandle = document.getElementById('resizeHandle');
+    let isResizing = false;
+    let startY, startHeight;
+    if (resizeHandle && widgetContent) {
+        resizeHandle.addEventListener('mousedown', function(e) {
+            isResizing = true;
+            startY = e.clientY;
+            startHeight = widgetContent.offsetHeight;
+            document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing) return;
+            let newHeight = startHeight + (e.clientY - startY);
+            newHeight = Math.max(120, Math.min(newHeight, 900)); // min/max height
+            widgetContent.style.height = newHeight + 'px';
+        });
+        document.addEventListener('mouseup', function() {
+            isResizing = false;
+            document.body.style.userSelect = '';
+        });
+    }
+
+    // Theme Toggle
+    const themeToggle = document.querySelector('.theme-switch-checkbox');
+    const body = document.body;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        body.classList.remove('light');
+        body.classList.add('dark');
+        themeToggle.checked = true;
+    } else {
+        body.classList.remove('dark');
+        body.classList.add('light');
+        themeToggle.checked = false;
+    }
+    
+    // Toggle event
+    themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            body.classList.remove('light');
+            body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.classList.remove('dark');
+            body.classList.add('light');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+    </script>
+</body>
+</html>

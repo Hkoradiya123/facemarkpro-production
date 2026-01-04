@@ -1,0 +1,4178 @@
+.timetable-fit {
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+}
+.timetable .slot strong {
+    font-size: 1rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+.timetable .slot div {
+    padding: 0 0.5px;
+}
+/* === Google Font Import === */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;600&display=swap');
+
+/* === Entire Dashboard Split === */
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  font-family: 'Baloo Bhai 2', cursive;
+  
+}
+body {
+    background: #fff !important;
+    color: #222 !important;
+}
+body.dark {
+    background: #181c24 !important;
+    color: #e0e0e0 !important;
+}
+
+
+/* === Sidebar === */
+.sidebar {
+  width: 20%;
+  background-color: #ffffff;
+  padding: 30px 20px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.5s, color 0.5s;
+  overflow-y: auto;
+}
+body.dark .block,
+body.dark .lecture-card,
+body.dark .timetable {
+  background-color: #577f93; /* lighter than body dark bg */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+
+body.dark .sidebar {
+  background: #1e1e1e;
+  color: #fff;
+}
+
+/* === Main Grid === */
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, max-content));
+  grid-auto-rows: min-content;
+  gap: 20px;
+  padding: 25px;
+  height: 100vh;
+  overflow: hidden;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+}
+
+/* === Block Styling === */
+.block {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: background 0.4s, color 0.4s, box-shadow 0.3s, border 0.3s, transform 0.2s;
+  animation: slideUp 0.4s ease;
+  cursor: pointer;
+  border: 1.5px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 16px 18px;
+}
+.block:hover {
+  box-shadow: 0 4px 16px rgba(79,172,254,0.08);
+  transform: translateY(-1px);
+  border: 1.5px solid #4facfe;
+  transition: all 0.2s ease;
+}
+
+/* === Grid Placements === */
+.timetable-block {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+/* === Fixed Current Lecture === */
+.current-lecture {
+  grid-column: 2 / 3;
+  grid-row: 0.5 / 2;
+  height: 100px;
+  padding: 12px 16px;
+  border-left: 4px solid #00c6fb;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1.4;
+  font-family: 'Baloo Bhai 2', cursive;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+body.dark .current-lecture {
+  background-color: #2a2a2a;
+  border-left-color: #00c6fb;
+}
+
+.current-lecture h4 {
+  font-size: 16px;
+  margin: 0 0 6px 0;
+  color: #333;
+}
+
+body.dark .current-lecture h4 {
+  color: #fff;
+}
+
+.current-lecture p {
+  margin: 2px 0;
+  font-size: 13.5px;
+  color: #444;
+  line-height: 1.3;
+}
+
+body.dark .current-lecture p {
+  color: #ddd;
+}
+
+
+/* === Upcoming Lecture === */
+.next-lecture {
+  grid-column: 2 / 3;
+  grid-row: 0.5 / 3;
+  height: 100px;
+  padding: 12px 16px;
+  border-left: 4px solid #00c6fb;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: all 0.4s ease;
+  font-family: 'Baloo Bhai 2', cursive;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+body.dark .next-lecture {
+  background-color: #2a2a2a;
+  border-left-color: #4facfe;
+}
+
+.next-lecture h4 {
+  font-size: 16px;
+  margin: 0 0 6px 0;
+  color: #333;
+}
+
+body.dark .next-lecture h4 {
+  color: #fff;
+}
+
+.next-lecture p {
+  margin: 2px 0;
+  font-size: 13.5px;
+  color: #444;
+}
+
+body.dark .next-lecture p {
+  color: #ddd;
+}
+
+/* === Graphs === */
+.graph-block {
+  grid-column: 1 / 2;
+  grid-row: 2 / 4;
+  height: 280px;
+}
+
+.side-graph1 {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+  height: 130px;
+}
+
+.side-graph2 {
+  grid-column: 2 / 3;
+  grid-row: 4 / 5;
+  height: 130px;
+}
+
+/* === Timetable Table Styling === */
+.timetable-container {
+  padding: 0.3rem;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  overflow: hidden !important;
+}
+
+.timetable-wrapper {
+  overflow-x: auto;
+  margin: 0;
+  overflow: hidden !important;
+}
+
+.timetable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+    font-size: 0.7rem;
+}
+
+body.dark .timetable {
+  background: #1e1e1e;
+  color: white;
+}
+
+.timetable th,
+.timetable td {
+    padding: 0.04rem !important;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    min-width: 16px;
+    max-width: 16px;
+    height: 12px !important;
+    min-height: 10px !important;
+    vertical-align: middle;
+    background: #fcfcfc;
+    transition: all 0.3s ease;
+    font-size: 0.7rem;
+  font-weight: 400;
+}
+.timetable td:hover {
+  transform: scale(1.08);
+  background-color: var(--highlight-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+
+
+body.dark .timetable th,
+body.dark .timetable td {
+  border-color: #444;
+  background: #2d2d2d;
+}
+
+.timetable th {
+  font-size: 0.5rem;
+  font-weight: 500;
+  background-color: #f4f6fa;
+  white-space: nowrap;
+}
+
+body.dark .timetable th {
+  background-color: #00c6fb;
+  color: #111;
+}
+/* === Sidebar Text === */
+.sidebar-header {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #4facfe;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+}
+
+.nav-links li {
+  /* margin-bottom: 24px; Increased from 15px for more spacing */
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.nav-links li a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* === Canvas === */
+canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* === Stack Transition for Current & Next Lecture === */
+.lecture-stack-container {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+  position: relative;
+  height: 220px;
+  perspective: 1000px;
+}
+
+.stack-front,
+.stack-back {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  padding: 12px 16px;
+  border-left: 4px solid #4facfe;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+  backface-visibility: hidden;
+}
+
+.stack-front {
+  z-index: 2;
+  transform: translateY(0);
+}
+
+.stack-back {
+  z-index: 1;
+  transform: translateY(20px) scale(0.98);
+  opacity: 0.5;
+}
+
+/* Optional: dark theme for stack */
+body.dark .stack-front, body.dark .stack-back {
+  background-color: #2a2a2a;
+  color: #eee;
+  border-left-color: #00c6fb;
+}
+/* === Horizontal Slide Container === */
+.lecture-slide-container {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  position: relative;
+  width: 100%;
+  /* height: 150px; */
+  padding-bottom: 12px; /* optional: thoda breathing space */
+  overflow: hidden;
+  min-height: 100px; 
+}
+
+.lecture-card {
+  position: absolute;
+  width: 100%;
+  /* height: 110%; */
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  border-left: 4px solid #4facfe;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+  font-size: 14px;
+  font-family: 'Baloo Bhai 2', cursive;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+}
+
+/* Dark theme support */
+body.dark .lecture-card {
+  background-color: #2a2a2a;
+  color: #fff;
+  border-left-color: #00c6fb;
+}
+
+/* Show/hide logic */
+.lecture-card {
+  transform: translateX(100%);
+  opacity: 0;
+  z-index: 0;
+}
+
+.lecture-card.active {
+  transform: translateX(0%);
+  opacity: 1;
+  z-index: 1;
+}
+/* === Subject Color Coding === */
+.slot {
+  padding: 0.04rem !important;
+  border-radius: 1px;
+  font-size: 0.42em;
+  font-weight: 400;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.01);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s cubic-bezier(.4,2,.6,1);
+  height: 100% !important;
+  min-height: 10px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.slot strong {
+  font-size: 0.45em;
+  margin-bottom: 0.03rem;
+  font-weight: 500;
+}
+
+.slot small {
+  font-size: 0.35em;
+  font-weight: 400;
+}
+
+/* Light theme subject colors */
+.slot.python { background-color: #e1f5fe; color: #0277bd; }
+.slot.dbms { background-color: #e8f5e9; color: #2e7d32; }
+.slot.c { background-color: #fff8e1; color: #f9a825; }
+.slot.math { background-color: #f3e5f5; color: #6a1b9a; }
+.slot.sql { background-color: #fce4ec; color: #ad1457; }
+
+/* Dark mode adjustments */
+body.dark .slot.python { background-color: #00334a; color: #81d4fa; }
+body.dark .slot.dbms { background-color: #1b3c1a; color: #a5d6a7; }
+body.dark .slot.c { background-color: #4a4100; color: #fff59d; }
+body.dark .slot.math { background-color: #3a2044; color: #ce93d8; }
+body.dark .slot.sql { background-color: #4a1f2d; color: #f48fb1; }
+/* Narrower day column */
+.day-cell {
+  background-color: #f4f6fa;
+  font-family: 'Segoe UI', 'Arial Narrow', Arial, sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  color: #555;
+  line-height: 1.35;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  min-width: 3rem;
+}
+/* Hover animation for timetable cells */
+.timetable td:hover {
+  transform: scale(1.08);
+  background-color: var(--highlight-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+/* Smooth animation for slot */
+.slot {
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+/* Hover scale and background color change */
+.timetable td:hover .slot {
+  transform: scale(1.05);
+}
+
+/* Contrasting hover background color for each subject */
+.slot.python:hover {background-color: #ffe0dc;  /* Soft Coral */}
+.slot.dbms:hover {background-color: #fff0cc;  /* Light Golden */}
+.slot.c:hover {background-color: #ccf5f5;  /* Pale Teal */}
+.slot.math:hover {background-color: #ddeeff;  /* Baby Blue */}
+.slot.sql:hover {background-color: #ffd6d6;  /* Light Red */}
+body.dark .slot.python:hover {background-color: #7b2d26; /* Dark coral / brick */}
+body.dark .slot.dbms:hover {background-color: #7c5e10; /* Mustard brown */}
+body.dark .slot.c:hover {background-color: #165a5a; /* Teal-ish */}
+body.dark .slot.math:hover {background-color: #243b55; /* Slate blue */}
+body.dark .slot.sql:hover {background-color: #5a1a1a; /* Dark red */}
+/* Toggle switch copied from login page */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+}
+
+.switch.small {
+  position: relative;
+  display: inline-block;
+  width: 70px;
+  height: 28px;
+}
+
+.switch.small input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch.small .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  border-radius: 34px;
+  transition: .4s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.switch.small .slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 2;
+}
+
+.switch.small input:checked + .slider:before {
+  transform: translateX(42px);
+}
+
+.switch-icon {
+  width: 16px;
+  height: 16px;
+  z-index: 3;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+  transition: transform 0.3s ease;
+  position: absolute;
+}
+
+.light-icon {
+  left: 7px;
+  top: 6px;
+}
+
+.dark-icon {
+  right: 7px;
+  top: 6px;
+}
+
+.switch.small:hover .slider {
+  transform: scale(1.05);
+}
+
+.switch.small:hover .switch-icon {
+  transform: scale(1.1);
+}
+
+body.dark .switch.small .slider {
+  background: linear-gradient(to right, #0f2027, #203a43);
+}
+
+body.dark .switch.small input:checked + .slider {
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+}
+
+/* Add glow effect on hover */
+.switch.small:hover .slider {
+  box-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
+}
+
+body.dark .switch.small:hover .slider {
+  box-shadow: 0 0 15px rgba(15, 32, 39, 0.5);
+}
+
+.smart-widget-carousel {
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+}
+
+.widget-card {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  z-index: 0;
+  transform: translateX(100%);
+  transition: transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 0.6s cubic-bezier(0.68,-0.55,0.27,1.55);
+  padding: 16px 18px;
+  background: #f7f8fa;
+  border: 1.5px solid #d1d5db;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+}
+
+.widget-card.active {
+  opacity: 1;
+  z-index: 1;
+  transform: translateX(0);
+}
+
+.widget-card.slide-left {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.widget-card.slide-right {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.smart-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.smart-controls button {
+  background: #00cec9;
+  border: none;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* === Live Widget Placement === */
+.live-widget {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  margin-top: 12px;
+  margin-bottom: 0;
+  padding: 18px 16px;
+  border-radius: 12px;
+  background: #f9f9f9;
+  box-shadow: 0 0 8px rgba(0,0,0,0.08);
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 60px;
+  transition: background 0.4s, color 0.4s;
+}
+body.dark .live-widget {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+body.dark .widget-card {
+  background: #23272f;
+  border: 1.5px solid #333a44;
+  color: #eee;
+}
+
+/* Drag mode visual feedback */
+.block.drag-active {
+  border: 2px dashed #4facfe;
+  background: #eaf6ff;
+  box-shadow: 0 8px 32px rgba(79,172,254,0.18);
+  opacity: 0.85;
+  z-index: 10;
+}
+
+body.dark .block.drag-active {
+  background: #203a43;
+  border: 2px dashed #00f2fe;
+}
+
+/* Small widget: compact size */
+.dashboard-widget-small {
+  grid-column: span 1 !important;
+  grid-row: span 1 !important;
+  min-height: 100px;
+  padding: 12px 14px;
+  font-size: 15px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* Large widget: wide or tall */
+.dashboard-widget-large {
+  grid-column: span 2 !important;
+  min-height: 220px;
+  font-size: 16px;
+}
+
+body.dark .block {
+  background: #1e1e1e;
+  color: white;
+  border: 1.5px solid #333a44;
+}
+body.dark .block:hover {
+  border: 1.5px solid #00f2fe;
+}
+body.dark .dashboard-widget-small {
+  background: #23272f;
+  border: 1.5px solid #333a44;
+}
+body.dark .dashboard-widget-large {
+  background: #23272f;
+  border: 1.5px solid #333a44;
+}
+
+html, body, .dashboard-layout {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Additional Dashboard Styles */
+.widget {
+    transition: all 0.3s ease;
+}
+
+.widget:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme specific styles */
+[data-theme="dark"] .widget {
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .table {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .alert-primary {
+    background-color: #1a365d;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .alert-success {
+    background-color: #1a472a;
+    color: #ffffff;
+}
+
+/* Loading animation */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+        padding: 10px;
+    }
+
+    .sidebar .nav-link span {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 60px;
+    }
+
+    .profile-section h5 {
+        display: none;
+    }
+}
+
+/* Grid background pattern */
+.grid-stack {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Widget resize handle */
+.grid-stack-item > .ui-resizable-handle {
+    background: none !important;
+}
+
+/* Add 3 dots as a grip in the bottom-right corner */
+.grid-stack-item > .ui-resizable-handle.ui-resizable-se::after {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 6px;
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  background: 
+    radial-gradient(circle, #bbb 2px, transparent 2.5px) 0 50%,
+    radial-gradient(circle, #bbb 2px, transparent 2.5px) 50% 50%,
+    radial-gradient(circle, #bbb 2px, transparent 2.5px) 100% 50%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  opacity: 0.7;
+  border-radius: 3px;
+}
+
+/* For dark mode */
+body.dark .grid-stack-item > .ui-resizable-handle.ui-resizable-se::after {
+  background: 
+    radial-gradient(circle, #4facfe 2px, transparent 2.5px) 0 50%,
+    radial-gradient(circle, #4facfe 2px, transparent 2.5px) 50% 50%,
+    radial-gradient(circle, #4facfe 2px, transparent 2.5px) 100% 50%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Animation for theme switch */
+.theme-switch .slider {
+    transition: all 0.3s ease;
+}
+
+/* Widget content scrolling */
+.widget-content {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-right: 0 !important;
+}
+
+/* Table styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+/* Alert styles */
+.alert {
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+}
+
+/* Chart container */
+#attendanceChart {
+    width: 100% !important;
+    height: 200px !important;
+}
+
+/* Remove all widget timetable related styles */
+/* End of file */
+
+/* Responsive Timetable Styles */
+.timetable {
+    width: 100%;
+    height: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+}
+
+.timetable th,
+.timetable td {
+    padding: 0.3rem;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    height: auto;
+    min-height: 5rem;
+    vertical-align: middle;
+    background: #fcfcfc;
+    transition: all 0.3s ease;
+}
+
+.timetable th {
+    background-color: #f4f6fa;
+    font-weight: 600;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.day-cell {
+    background-color: #f4f6fa;
+    font-family: 'Segoe UI', 'Arial Narrow', Arial, sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    color: #555;
+    line-height: 1.35;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    min-width: 3rem;
+}
+
+.slot {
+    padding: 0.3rem;
+    border-radius: 4px;
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s cubic-bezier(.4,2,.6,1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 5rem;
+}
+
+.slot strong {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    line-height: 1.2;
+}
+
+.slot small {
+    font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+    opacity: 0.9;
+}
+
+/* Adjust cell sizes based on widget dimensions */
+.grid-stack-item[gs-w="12"] .timetable th,
+.grid-stack-item[gs-w="12"] .timetable td {
+    min-width: 4rem;
+}
+
+.grid-stack-item[gs-w="10"] .timetable th,
+.grid-stack-item[gs-w="10"] .timetable td {
+    min-width: 3.5rem;
+}
+
+.grid-stack-item[gs-w="8"] .timetable th,
+.grid-stack-item[gs-w="8"] .timetable td {
+    min-width: 3rem;
+}
+
+.grid-stack-item[gs-w="6"] .timetable th,
+.grid-stack-item[gs-w="6"] .timetable td {
+    min-width: 2.5rem;
+}
+
+/* Adjust font sizes based on widget height */
+.grid-stack-item[gs-h="8"] .timetable {
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+}
+
+.grid-stack-item[gs-h="6"] .timetable {
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+}
+
+.grid-stack-item[gs-h="4"] .timetable {
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+}
+
+/* Ensure content is visible when widget is small */
+.widget-content {
+    overflow: visible; /* Changed from auto to allow popups */
+    height: calc(100% - 3rem); /* Subtract header height */
+}
+
+/* Maintain aspect ratio for cells */
+.timetable td {
+    aspect-ratio: 1;
+    max-width: none;
+}
+
+/* Ensure time slots are visible */
+.timetable th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dark mode adjustments */
+body.dark .timetable th,
+body.dark .timetable td {
+    border-color: #444;
+    background: #2d2d2d;
+}
+
+body.dark .timetable th,
+body.dark .day-cell {
+    background-color: #1e1e1e;
+    color: #fff;
+}
+
+body.dark .slot {
+    filter: brightness(0.85);
+}
+
+/* === Responsive Timetable for Desktop Widget === */
+.widget-content .table-responsive {
+  overflow-x: unset;
+  width: 100%;
+}
+
+.timetable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: clamp(1rem, 1.2vw, 1.4rem);
+}
+
+.timetable th,
+.timetable td {
+  padding: 0.7em 1.2em;
+  min-width: 6em;
+  max-width: 14vw;
+  text-align: center;
+  vertical-align: middle;
+  transition: all 0.2s;
+  word-break: break-word;
+  font-size: clamp(1.1rem, 1.3vw, 1.5rem);
+}
+
+.timetable th {
+  font-size: clamp(1.2rem, 1.5vw, 1.7rem);
+  background: #f4f6fa;
+  white-space: nowrap;
+}
+
+.day-cell {
+  font-weight: bold;
+  font-size: clamp(1.2rem, 1.5vw, 1.7rem);
+  background: #f4f6fa;
+  min-width: 5em;
+}
+
+.slot {
+  font-size: clamp(1.1rem, 1.3vw, 1.5rem);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8em;
+  background: #e0f7fa;
+  border-radius: 6px;
+  margin: 0.1em 0;
+}
+
+.slot strong {
+  font-size: clamp(1.3rem, 1.7vw, 1.8rem);
+  font-weight: bold;
+}
+
+.slot small, .slot div[style*="font-size:0.85em"] {
+  font-size: clamp(1rem, 1vw, 1.2rem) !important;
+  opacity: 0.85;
+}
+
+/* Remove mobile/tablet specific rules */
+@media (max-width: 1200px), (max-width: 900px), (max-width: 700px) {
+  .timetable, .timetable th, .timetable td, .day-cell, .slot, .slot strong, .slot small {
+    font-size: unset !important;
+    min-width: unset !important;
+    padding: unset !important;
+  }
+}
+
+/* Timetable fills widget height and rows/cells stretch proportionally */
+.widget-content, .table-responsive, .timetable {
+  height: 100%;
+  min-height: 0;
+}
+
+.timetable {
+  table-layout: fixed;
+  height: 100%;
+}
+
+.timetable tbody {
+  height: 100%;
+  display: table-row-group;
+}
+
+.timetable tr {
+  height: 20%; /* For 5 rows */
+}
+
+.timetable td, .timetable th {
+  height: 100%;
+  min-height: 3em;
+  vertical-align: middle;
+}
+
+.timetable td > .slot {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Make days row (Mon, Tue, ...) more bold, but not the first column */
+.timetable th:not(:first-child) {
+    font-weight: 700;
+}
+.timetable th:first-child {
+    font-weight: 400;
+}
+
+/* Add dot indicator */
+.widget::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Dark theme dot indicator */
+body.dark .widget::after {
+  background-color: #00f2fe;
+}
+
+/* Update widget hover animation */
+.widget {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.widget:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark theme hover adjustments */
+body.dark .block:hover {
+  border: 1.5px solid #00f2fe;
+  box-shadow: 0 4px 16px rgba(0,242,254,0.08);
+}
+
+/* Smooth transition for moving grid items */
+.grid-stack-item {
+  transition: 
+    left 0.35s cubic-bezier(0.4, 0.2, 0.2, 1),
+    top 0.35s cubic-bezier(0.4, 0.2, 0.2, 1),
+    transform 0.35s cubic-bezier(0.4, 0.2, 0.2, 1);
+  will-change: left, top, transform;
+}
+
+.lecture-info {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.lecture-info h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.lecture-info p {
+    color: #666;
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.lecture-info i {
+    width: 20px;
+    color: #4a90e2;
+    margin-right: 8px;
+}
+
+/* Add some hover effect */
+.lecture-info:hover {
+    background-color: #e9ecef;
+    transition: background-color 0.3s ease;
+}
+
+/* Make the widget content more organized */
+.widget {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.widget-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+/* Add some spacing between widgets */
+.grid-stack-item {
+    margin-bottom: 20px;
+}
+
+/* Make the content area scrollable if needed */
+.grid-stack-item-content {
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+/* Add some animation for the lecture info */
+.lecture-info {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Theme Switch Styles */
+.theme-switch {
+  width: 110px !important;
+  --container-width: 110px !important;
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  --toggle-size: 20px;
+  --container-height: 2.2em;
+  --container-radius: 6.25em;
+  --circle-container-diameter: 2.2em;
+  --sun-moon-diameter: 1.4em;
+  --sun-bg: #ECCA2F;
+  --moon-bg: #C4C9D1;
+  --spot-color: #959DB1;
+  --circle-container-offset: calc((var(--circle-container-diameter) - var(--container-height)) / 2 * -1);
+  --stars-color: #fff;
+  --clouds-color: #F3FDFF;
+  --back-clouds-color: #AACADF;
+  --transition: 1.2s cubic-bezier(0, -0.02, 0.4, 1.25);
+  --circle-transition: 0.9s cubic-bezier(0, -0.02, 0.35, 1.17);
+}
+
+.theme-switch, .theme-switch *, .theme-switch *::before, .theme-switch *::after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: var(--toggle-size);
+}
+
+.theme-switch__container {
+  width: var(--container-width);
+  height: var(--container-height);
+  background-color: var(--container-light-bg);
+  border-radius: var(--container-radius);
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-box-shadow: 0em -0.062em 0.062em rgba(0, 0, 0, 0.25), 0em 0.062em 0.125em rgba(255, 255, 255, 0.94);
+  box-shadow: 0em -0.062em 0.062em rgba(0, 0, 0, 0.25), 0em 0.062em 0.125em rgba(255, 255, 255, 0.94);
+  -webkit-transition: var(--transition);
+  -o-transition: var(--transition);
+  transition: var(--transition);
+  position: relative;
+}
+
+.theme-switch__container::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  -webkit-box-shadow: 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset, 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset;
+  box-shadow: 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset, 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset;
+  border-radius: var(--container-radius)
+}
+
+.theme-switch__checkbox {
+  display: none;
+}
+
+.theme-switch__circle-container {
+  width: var(--circle-container-diameter);
+  height: var(--circle-container-diameter);
+  background-color: rgba(255, 255, 255, 0.1);
+  position: absolute;
+  left: var(--circle-container-offset);
+  top: var(--circle-container-offset);
+  border-radius: var(--container-radius);
+  -webkit-box-shadow: inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), 0 0 0 0.625em rgba(255, 255, 255, 0.1), 0 0 0 1.25em rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), 0 0 0 0.625em rgba(255, 255, 255, 0.1), 0 0 0 1.25em rgba(255, 255, 255, 0.1);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-transition: var(--circle-transition);
+  -o-transition: var(--circle-transition);
+  transition: var(--circle-transition);
+  pointer-events: none;
+}
+
+.theme-switch__sun-moon-container {
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+  width: var(--sun-moon-diameter);
+  height: var(--sun-moon-diameter);
+  margin: auto;
+  border-radius: var(--container-radius);
+  background-color: var(--sun-bg);
+  -webkit-box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #a1872a inset;
+  box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #a1872a inset;
+  -webkit-filter: drop-shadow(0.062em 0.125em 0.125em rgba(0, 0, 0, 0.25)) drop-shadow(0em 0.062em 0.125em rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0.062em 0.125em 0.125em rgba(0, 0, 0, 0.25)) drop-shadow(0em 0.062em 0.125em rgba(0, 0, 0, 0.25));
+  overflow: hidden;
+  -webkit-transition: var(--transition);
+  -o-transition: var(--transition);
+  transition: var(--transition);
+}
+
+.theme-switch__moon {
+  -webkit-transform: translateX(100%);
+  -ms-transform: translateX(100%);
+  transform: translateX(100%);
+  width: 100%;
+  height: 100%;
+  background-color: var(--moon-bg);
+  border-radius: inherit;
+  -webkit-box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #969696 inset;
+  box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #969696 inset;
+  -webkit-transition: var(--transition);
+  -o-transition: var(--transition);
+  transition: var(--transition);
+  position: relative;
+}
+
+.theme-switch__spot {
+  position: absolute;
+  top: 0.75em;
+  left: 0.312em;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: var(--container-radius);
+  background-color: var(--spot-color);
+  -webkit-box-shadow: 0em 0.0312em 0.062em rgba(0, 0, 0, 0.25) inset;
+  box-shadow: 0em 0.0312em 0.062em rgba(0, 0, 0, 0.25) inset;
+}
+
+.theme-switch__spot:nth-of-type(2) {
+  width: 0.375em;
+  height: 0.375em;
+  top: 0.937em;
+  left: 1.375em;
+}
+
+.theme-switch__spot:nth-last-of-type(3) {
+  width: 0.25em;
+  height: 0.25em;
+  top: 0.312em;
+  left: 0.812em;
+}
+
+.theme-switch__clouds {
+  width: 1.25em;
+  height: 1.25em;
+  background-color: var(--clouds-color);
+  border-radius: var(--container-radius);
+  position: absolute;
+  bottom: -0.625em;
+  left: 0.312em;
+  -webkit-box-shadow: 0.937em 0.312em var(--clouds-color), -0.312em -0.312em var(--back-clouds-color), 1.437em 0.375em var(--clouds-color), 0.5em -0.125em var(--back-clouds-color), 2.187em 0 var(--clouds-color), 1.25em -0.062em var(--back-clouds-color), 2.937em 0.312em var(--clouds-color), 2em -0.312em var(--back-clouds-color), 3.625em -0.062em var(--clouds-color), 2.625em 0em var(--back-clouds-color), 4.5em -0.312em var(--clouds-color), 3.375em -0.437em var(--back-clouds-color), 4.625em -1.75em 0 0.437em var(--clouds-color), 4em -0.625em var(--back-clouds-color), 4.125em -2.125em 0 0.437em var(--back-clouds-color);
+  box-shadow: 0.937em 0.312em var(--clouds-color), -0.312em -0.312em var(--back-clouds-color), 1.437em 0.375em var(--clouds-color), 0.5em -0.125em var(--back-clouds-color), 2.187em 0 var(--clouds-color), 1.25em -0.062em var(--back-clouds-color), 2.937em 0.312em var(--clouds-color), 2em -0.312em var(--back-clouds-color), 3.625em -0.062em var(--clouds-color), 2.625em 0em var(--back-clouds-color), 4.5em -0.312em var(--clouds-color), 3.375em -0.437em var(--back-clouds-color), 4.625em -1.75em 0 0.437em var(--clouds-color), 4em -0.625em var(--back-clouds-color), 4.125em -2.125em 0 0.437em var(--back-clouds-color);
+  -webkit-transition: 0.5s cubic-bezier(0, -0.02, 0.4, 1.25);
+  -o-transition: 0.5s cubic-bezier(0, -0.02, 0.4, 1.25);
+  transition: 0.5s cubic-bezier(0, -0.02, 0.4, 1.25);
+}
+
+.theme-switch__stars-container {
+  position: absolute;
+  color: var(--stars-color);
+  top: -100%;
+  left: 0.312em;
+  width: 2.75em;
+  height: auto;
+  -webkit-transition: var(--transition);
+  -o-transition: var(--transition);
+  transition: var(--transition);
+}
+
+/* actions */
+
+.theme-switch__checkbox:checked + .theme-switch__container {
+  background-color: var(--container-night-bg);
+}
+
+.theme-switch__checkbox:checked + .theme-switch__container .theme-switch__circle-container {
+  left: calc(100% - var(--circle-container-offset) - var(--circle-container-diameter));
+}
+
+.theme-switch__checkbox:checked + .theme-switch__container .theme-switch__circle-container:hover {
+  left: calc(100% - var(--circle-container-offset) - var(--circle-container-diameter) - 0.187em)
+}
+
+.theme-switch__circle-container:hover {
+  left: calc(var(--circle-container-offset) + 0.187em);
+}
+
+.theme-switch__checkbox:checked + .theme-switch__container .theme-switch__moon {
+  -webkit-transform: translate(0);
+  -ms-transform: translate(0);
+  transform: translate(0);
+}
+
+.theme-switch__checkbox:checked + .theme-switch__container .theme-switch__clouds {
+  bottom: -4.062em;
+}
+
+.theme-switch__checkbox:checked + .theme-switch__container .theme-switch__stars-container {
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* NEW FADE OVERLAY FOR THEME SWITCH */
+.fade-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.fade-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.theme-switch {
+  width: 60px;
+  height: 30px;
+  background: #ccc;
+  border-radius: 30px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  cursor: pointer;
+  transition: background 0.4s ease;
+}
+
+.theme-switch .icon {
+  font-size: 14px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.toggle-circle {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: left 0.4s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+
+/* === Widget Base Styles === */
+.widget {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 16px;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.widget:hover {
+    box-shadow: 0 4px 16px rgba(79,172,254,0.08);
+    transform: translateY(-1px);
+    border: 1px solid #4facfe;
+}
+
+.widget-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.widget-header i {
+    font-size: 1.2rem;
+    margin-right: 10px;
+    color: #4facfe;
+}
+
+.widget-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+/* === Timetable Widget === */
+.timetable-widget {
+    overflow: hidden;
+}
+
+.timetable-container {
+    height: 100%;
+    overflow: auto;
+}
+
+.timetable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+}
+
+.timetable th,
+.timetable td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    min-width: 80px;
+    vertical-align: middle;
+}
+
+.timetable th {
+    background: #f4f6fa;
+    font-weight: 600;
+}
+
+.slot {
+    padding: 8px;
+    border-radius: 6px;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+.slot:hover {
+    transform: scale(1.05);
+    background: #e3f2fd;
+}
+
+/* === Current Lecture Widget === */
+.lecture-widget {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.lecture-widget .widget-header {
+    border-bottom-color: rgba(255,255,255,0.2);
+}
+
+.lecture-widget .widget-header i {
+    color: white;
+}
+
+.lecture-widget .widget-title {
+    color: white;
+}
+
+.lecture-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lecture-info p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* === Attendance Widget === */
+.attendance-widget {
+    background: white;
+}
+
+/* Attendance Chart Widget Styles */
+.widget .widget-content canvas {
+    width: 100% !important;
+    height: 200px !important;
+    max-height: 200px;
+}
+
+.widget .widget-content {
+    padding: 10px;
+    height: calc(100% - 60px); /* Subtract header height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure chart container has proper height */
+.widget .widget-content canvas[id^="attendanceBarChart_"] {
+    max-height: 180px;
+    min-height: 150px;
+}
+
+.attendance-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #4facfe;
+}
+
+.stat-card p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* === Student List Widget === */
+.student-list-widget {
+    background: white;
+}
+
+.student-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.student-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.student-item:last-child {
+    border-bottom: none;
+}
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.student-info {
+    flex: 1;
+}
+
+.student-name {
+    font-weight: 600;
+    margin: 0;
+}
+
+.student-id {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+}
+
+/* === Notifications Widget === */
+.notifications-widget {
+    background: white;
+}
+
+.notification-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e3f2fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4facfe;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin: 0;
+}
+
+.notification-time {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 5px 0 0;
+}
+
+/* === Quick Stats Widget === */
+.quick-stats-widget {
+    background: white;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.stat-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-box i {
+    font-size: 1.5rem;
+    color: #4facfe;
+    margin-bottom: 8px;
+}
+
+.stat-box h4 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.stat-box p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* === Dark Theme Support === */
+body.dark .widget {
+    background-color: #2d2d2d;
+    border-color: #333;
+}
+
+body.dark .widget-header {
+    border-bottom-color: #444;
+}
+
+body.dark .widget-title {
+    color: #fff;
+}
+
+body.dark .timetable th,
+body.dark .timetable td {
+    border-color: #444;
+}
+
+body.dark .timetable th {
+    background: #1e1e1e;
+}
+
+body.dark .slot {
+    background: #333;
+}
+
+body.dark .slot:hover {
+    background: #444;
+}
+
+body.dark .stat-card,
+body.dark .student-item,
+body.dark .notification-item,
+body.dark .stat-box {
+    background: #333;
+    border-color: #444;
+}
+
+body.dark .student-id,
+body.dark .notification-time,
+body.dark .stat-box p {
+    color: #aaa;
+}
+
+/* === Responsive Adjustments === */
+@media (max-width: 768px) {
+    .stats-grid,
+    .attendance-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .timetable {
+        font-size: 0.75rem;
+    }
+    
+    .timetable th,
+    .timetable td {
+        padding: 4px;
+        min-width: 60px;
+    }
+}
+
+/* === Animation === */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.widget {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* === Calendar Widget Styles === */
+.calendar-widget {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: visible; /* Changed from hidden to allow popups */
+    border: none !important;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.calendar-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-month-year {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #4facfe;
+    text-transform: capitalize;
+    flex-grow: 1; /* Allow month to take available space */
+    text-align: center; /* Center the month name */
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-btn {
+    background: none;
+    border: none;
+    color: #4facfe;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-btn:hover {
+    background: #e3f2fd;
+    transform: scale(1.1);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    flex: 1;
+    min-height: 0;
+    overflow: visible; /* Changed from hidden to allow popups */
+}
+
+.calendar-days {
+    text-align: center;
+    font-weight: 600;
+    color: #666;
+    padding: 4px 2px;
+    font-size: 0.85rem;
+}
+
+.calendar-date {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+    padding: 2px;
+    outline: none;
+}
+
+.calendar-date:hover {
+    background: #e3f2fd;
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.calendar-date:focus {
+    outline: none;
+}
+
+.calendar-date.today {
+    background: #4facfe;
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-date.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    width: 3px;
+    height: 3px;
+    background: #4facfe;
+    border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .calendar-date {
+        font-size: 0.75rem;
+    }
+    .calendar-days {
+        font-size: 0.75rem;
+    }
+    .calendar-month-year {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-date {
+        font-size: 0.7rem;
+    }
+    .calendar-days {
+        font-size: 0.7rem;
+    }
+    .calendar-month-year {
+        font-size: 0.9rem;
+    }
+}
+
+/* Dark theme support */
+body.dark .calendar-widget {
+    background: #2d2d2d;
+}
+
+body.dark .calendar-title {
+    color: #fff;
+}
+
+body.dark .calendar-month-year {
+    color: #00f2fe;
+}
+
+body.dark .calendar-date {
+    color: #fff;
+}
+
+body.dark .calendar-date:hover {
+    background: #444;
+}
+
+body.dark .calendar-btn {
+    color: #00f2fe;
+}
+
+body.dark .calendar-btn:hover {
+    background: #444;
+}
+
+/* Quick Add Popup */
+.quick-add-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    width: 300px;
+    display: none;
+}
+
+.quick-add-popup.active {
+    display: block;
+}
+
+.quick-add-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.quick-add-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.close-popup {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.quick-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.quick-add-form input,
+.quick-add-form select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.quick-add-form select {
+    background: white;
+}
+
+.quick-add-form button {
+    background: #4facfe;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.quick-add-form button:hover {
+    background: #00f2fe;
+}
+
+/* Event Types Colors */
+.event-meeting { background: #e3f2fd; color: #1976d2; }
+.event-holiday { background: #ffe0e0; color: #d32f2f; }
+.event-class { background: #e8f5e9; }
+.event-personal { background: #fff3e0; }
+
+/* Dark Theme Support */
+body.dark .calendar-widget {
+    background: #2d2d2d;
+}
+
+body.dark .calendar-title {
+    color: #fff;
+}
+
+body.dark .calendar-date {
+    color: #fff;
+}
+
+body.dark .calendar-date:hover {
+    background: #444;
+}
+
+body.dark .quick-add-popup {
+    background: #2d2d2d;
+    color: #fff;
+}
+
+body.dark .quick-add-form input,
+body.dark .quick-add-form select {
+    background: #333;
+    border-color: #444;
+    color: #fff;
+}
+
+/* Overlay for popup */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: none;
+}
+
+.popup-overlay.active {
+    display: block;
+}
+
+/* === Widget Remove Button Styles === */
+.widget {
+    position: relative;
+}
+
+.widget-remove-btn {
+    display: none;
+}
+
+/* Confirmation Popup Styles */
+.confirmation-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    width: 300px;
+    display: none;
+    text-align: center;
+}
+
+.confirmation-popup.active {
+    display: block;
+    animation: popIn 0.2s ease-out;
+}
+
+.confirmation-popup h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.confirmation-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.confirm-btn, .cancel-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.confirm-btn {
+    background: #ff4444;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background: #ff0000;
+    transform: scale(1.05);
+}
+
+.cancel-btn {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.cancel-btn:hover {
+    background: #d0d0d0;
+    transform: scale(1.05);
+}
+
+/* Dark theme support */
+body.dark .confirmation-popup {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark .confirmation-popup h4 {
+    color: white;
+}
+
+body.dark .cancel-btn {
+    background: #444;
+    color: white;
+}
+
+body.dark .cancel-btn:hover {
+    background: #555;
+}
+
+/* Animation */
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: none;
+}
+
+.popup-overlay.active {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Remove extra bottom space from timetable widget */
+.timetable-widget,
+.timetable-container,
+.widget-content {
+    padding-top: 5px !important;
+    margin-top: 0 !important;
+}
+
+.timetable {
+    padding-top: 5px !important;
+}
+
+/* Remove blue border/outline from timetable widget */
+.timetable-widget,
+.calendar-widget,
+.widget {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Timetable widget: remove all padding/margin, use full area */
+.widget.timetable-widget,
+.timetable-widget,
+.timetable-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.timetable {
+    width: 100% !important;
+    height: 10% !important;
+    margin: 0 !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.timetable th, .timetable td {
+    padding: 2px 0.5px !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    height: 22px !important;
+    font-size: 0.8rem;
+}
+
+/* From Uiverse.io by OnCloud125252 */ 
+/* Note that you only needs to edit the config to customize the button! */
+
+.plusButton {
+  /* Config start */
+  --plus_sideLength: 1.8rem;
+  --plus_topRightTriangleSideLength: 0.9rem;
+  /* Config end */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid white;
+  width: var(--plus_sideLength);
+  height: var(--plus_sideLength);
+  background-color: #000000;
+  overflow: hidden;
+}
+
+.plusButton::before {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-width: 0 var(--plus_topRightTriangleSideLength) var(--plus_topRightTriangleSideLength) 0;
+  border-style: solid;
+  border-color: transparent rgb(108, 126, 160) transparent transparent;
+  transition-timing-function: ease-in-out;
+  transition-duration: 0.2s;
+}
+
+.plusButton:hover {
+  cursor: pointer;
+}
+
+.plusButton:hover::before {
+  --plus_topRightTriangleSideLength: calc(var(--plus_sideLength) * 2);
+}
+
+.plusButton:focus-visible::before {
+  --plus_topRightTriangleSideLength: calc(var(--plus_sideLength) * 2);
+}
+
+.plusButton>.plusIcon {
+  fill: white;
+  width: calc(var(--plus_sideLength) * 0.7);
+  height: calc(var(--plus_sideLength) * 0.7);
+  z-index: 1;
+  transition-timing-function: ease-in-out;
+  transition-duration: 0.2s;
+}
+
+.plusButton:hover>.plusIcon {
+  fill: black;
+  transform: rotate(180deg);
+}
+
+.plusButton:focus-visible>.plusIcon {
+  fill: black;
+  transform: rotate(180deg);
+}
+
+.nav-link {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 18px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.nav-link.active {
+  background-color: #e3f0ff;
+  color: #1976d2 !important;
+  border-radius: 8px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+}
+
+.nav-link + .plusButton {
+  margin-left: 62px;
+}
+
+/* From Uiverse.io by namecho */ 
+.switch {
+  --button-width: 3.5em;
+  --button-height: 2em;
+  --toggle-diameter: 1.5em;
+  --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
+  --toggle-shadow-offset: 10px;
+  --toggle-wider: 3em;
+  --color-grey: #cccccc;
+  --color-green: #4296f4;
+  margin-left: 0;
+}
+
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+}
+
+.nav-link.text-danger {
+  margin-left: 0 !important;
+}
+
+.slider {
+ display: inline-block;
+ width: var(--button-width);
+ height: var(--button-height);
+ background-color: var(--color-grey);
+ border-radius: calc(var(--button-height) / 2);
+ position: relative;
+ transition: 0.3s all ease-in-out;
+}
+
+.slider::after {
+ content: "";
+ display: inline-block;
+ width: var(--toggle-diameter);
+ height: var(--toggle-diameter);
+ background-color: #fff;
+ border-radius: calc(var(--toggle-diameter) / 2);
+ position: absolute;
+ top: var(--button-toggle-offset);
+ transform: translateX(var(--button-toggle-offset));
+ box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+ transition: 0.3s all ease-in-out;
+}
+
+.switch input[type="checkbox"]:checked + .slider {
+ background-color: var(--color-green);
+}
+
+.switch input[type="checkbox"]:checked + .slider::after {
+ transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+ box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+}
+
+.switch input[type="checkbox"] {
+ display: none;
+}
+
+.switch input[type="checkbox"]:active + .slider::after {
+ width: var(--toggle-wider);
+}
+
+.switch input[type="checkbox"]:checked:active + .slider::after {
+ transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
+}
+
+.square-plus-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  background: #f5f7fa;
+  color: #1976d2;
+  border: 2px solid #e3f0ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 62px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.06);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
+  border-radius: 6px;
+  outline: none;
+}
+.square-plus-btn:hover, .square-plus-btn:focus-visible {
+  background: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.12);
+}
+.plus-icon {
+  line-height: 1;
+  font-size: 1.6rem;
+  pointer-events: none;
+}
+
+.icon-plus-btn {
+  margin-left: 48px;
+  width: 38px;
+  height: 38px;
+  border: 2px solid #1976d2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.18s, border 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.06);
+}
+.icon-plus-btn:hover, .icon-plus-btn:focus-visible {
+  background: #e3f0ff;
+  border-color: #1565c0;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+}
+.icon-plus-btn svg {
+  display: block;
+}
+
+body.dark .nav-link {
+  color: #e0e0e0;
+}
+body.dark .nav-link.active {
+  background-color: #23272f;
+  color: #4facfe !important;
+}
+body.dark .icon-plus-btn {
+  background: #23272f;
+  border-color: #4facfe;
+}
+body.dark .icon-plus-btn:hover, body.dark .icon-plus-btn:focus-visible {
+  background: #1e293b;
+  border-color: #00f2fe;
+}
+body.dark .icon-plus-btn svg path {
+  stroke: #4facfe;
+}
+
+body.dark .widget-selection-content {
+  background: #23272f;
+  color: #fff;
+}
+body.dark .widget-option {
+  background: #1e1e1e;
+  border-color: #333;
+  color: #fff;
+}
+body.dark .widget-option:hover {
+  border-color: #00f2fe;
+  background: #23272f;
+}
+body.dark .btn.btn-secondary {
+  background: #23272f;
+  color: #fff;
+  border-color: #444;
+}
+body.dark .btn.btn-secondary:hover {
+  background: #1e1e1e;
+  color: #00f2fe;
+}
+body.dark .empty-state {
+  color: #aaa;
+}
+
+/* === DARK MODE BORDER FIXES === */
+body.dark .widget,
+body.dark .lecture-card,
+body.dark .calendar-widget,
+body.dark .widget-selection-content,
+body.dark .quick-add-popup,
+body.dark .confirmation-popup,
+body.dark .timetable-container {
+  border: 2px solid #2a2a2a !important;
+  box-shadow: 0 2px 16px #2a2a2a !important;
+}
+body.dark .timetable-container {
+  border: 2px solid #23272f !important;
+  box-shadow: 0 0 0 0 transparent !important;
+}
+body.dark .widget-header {
+  border-bottom: 1px solid #23272f !important;
+}
+body.dark .plusButton {
+  border-color: #23272f !important;
+}
+body.dark .plusButton::before {
+  border-color: transparent #23272f transparent transparent !important;
+}
+body.dark .icon-plus-btn {
+  border-color: #23272f !important;
+}
+body.dark .square-plus-btn {
+  border-color: #23272f !important;
+}
+body.dark .timetable th,
+body.dark .timetable td {
+  border-color: #0f2027 !important;
+}
+body.dark .widget-option {
+  border-color: #23272f !important;
+}
+body.dark .widget-option:hover {
+  border-color: #00f2fe !important;
+}
+body.dark .sidebar {
+  border-right: 1.5px solid #23272f !important;
+}
+
+body.dark .grid-stack-item-content {
+    background: #2a2a2a !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 10px #2a2a2a !important;
+    border: 2px solid #2a2a2a !important;
+}
+
+/* === Enhanced Calendar Widget Styles === */
+.calendar-widget {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: visible; /* Changed from hidden to allow popups */
+    border: none !important;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.calendar-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-month-year {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #4facfe;
+    text-transform: capitalize;
+    flex-grow: 1; /* Allow month to take available space */
+    text-align: center; /* Center the month name */
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-btn {
+    background: none;
+    border: none;
+    color: #4facfe;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-btn:hover {
+    background: #e3f2fd;
+    transform: scale(1.1);
+}
+
+.today-btn {
+    background: #4facfe;
+    color: white;
+}
+
+.today-btn:hover {
+    background: #00f2fe;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    flex: 1;
+    min-height: 0;
+    overflow: visible; /* Changed from hidden to allow popups */
+}
+
+.calendar-days {
+    text-align: center;
+    font-weight: 600;
+    color: #666;
+    padding: 4px 2px;
+    font-size: 0.85rem;
+}
+
+.calendar-date {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+    padding: 2px;
+    outline: none;
+}
+
+.calendar-date:hover {
+    background: #e3f2fd;
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.calendar-date:focus {
+    outline: none;
+}
+
+.calendar-date.today {
+    background: #4facfe;
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-date.has-events {
+    background: #fff3e0;
+    border: 2px solid #ff9800;
+}
+
+.calendar-date.has-events:hover {
+    background: #ffe0b2;
+}
+
+/* Event Indicators */
+.event-indicator {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #ff5722;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+.event-count {
+    line-height: 1;
+}
+
+.calendar-date.has-events {
+    background: #fff3e0;
+    border: 2px solid #ff9800;
+    font-weight: 600;
+}
+
+.calendar-date.has-events:hover {
+    background: #ffe0b2;
+    transform: scale(1.15);
+    z-index: 3;
+}
+
+/* Event Preview */
+.event-preview {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 200px;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.calendar-date:hover .event-preview {
+    display: flex;
+}
+
+.event-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.event-preview-item i {
+    width: 12px;
+    text-align: center;
+}
+
+/* Date View Modal */
+.date-view-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.date-view-modal.active {
+    opacity: 1;
+}
+
+.date-view-content {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.date-view-modal.active .date-view-content {
+    transform: scale(1);
+}
+
+.date-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.date-view-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.close-date-view {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-date-view:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.date-view-events {
+    margin-bottom: 20px;
+}
+
+.no-events {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+
+.date-event-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 4px solid #4facfe;
+}
+
+.date-event-item.event-meeting { border-left-color: #2196f3; }
+.date-event-item.event-holiday { border-left-color: #ff5722; }
+.date-event-item.event-class { border-left-color: #4caf50; }
+.date-event-item.event-personal { border-left-color: #ff9800; }
+.date-event-item.event-exam { border-left-color: #e91e63; }
+.date-event-item.event-deadline { border-left-color: #9c27b0; }
+.date-event-item.event-workshop { border-left-color: #00bcd4; }
+
+.event-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.event-header i {
+    color: #4facfe;
+    width: 16px;
+}
+
+.event-title {
+    flex: 1;
+    font-weight: 600;
+    color: #333;
+}
+
+.event-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.edit-event-btn, .delete-event-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+}
+
+.edit-event-btn {
+    color: #2196f3;
+}
+
+.edit-event-btn:hover {
+    background: #e3f2fd;
+}
+
+.delete-event-btn {
+    color: #f44336;
+}
+
+.delete-event-btn:hover {
+    background: #ffebee;
+}
+
+.event-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.event-time {
+    color: #888;
+    font-size: 0.8rem;
+    margin: 5px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.date-view-actions {
+    text-align: center;
+}
+
+.add-event-btn {
+    background: #4facfe;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.add-event-btn:hover {
+    background: #00f2fe;
+    transform: translateY(-1px);
+}
+
+/* Enhanced Quick Add Popup */
+.quick-add-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    width: 400px;
+    max-width: 90vw;
+    display: none;
+}
+
+.quick-add-popup.active {
+    display: block;
+    animation: popIn 0.3s ease-out;
+}
+
+.quick-add-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.quick-add-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.close-popup {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-popup:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.quick-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.quick-add-form input,
+.quick-add-form select,
+.quick-add-form textarea {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.quick-add-form input:focus,
+.quick-add-form select:focus,
+.quick-add-form textarea:focus {
+    outline: none;
+    border-color: #4facfe;
+    box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.1);
+}
+
+.quick-add-form select {
+    background: white;
+}
+
+.quick-add-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.quick-add-form button {
+    background: #4facfe;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+.quick-add-form button:hover {
+    background: #00f2fe;
+    transform: translateY(-1px);
+}
+
+/* Recurring Event Section */
+.recurring-section {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 12px;
+    background: #f8f9fa;
+}
+
+.recurring-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.recurring-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4facfe;
+}
+
+.recurring-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.recurring-days label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: white;
+    border: 1px solid #ddd;
+    transition: all 0.2s;
+}
+
+.recurring-days label:hover {
+    background: #e3f2fd;
+    border-color: #4facfe;
+}
+
+.recurring-days input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #4facfe;
+}
+
+/* Event Type Colors */
+.event-meeting { background: #e3f2fd; color: #1976d2; }
+.event-holiday { background: #ffe0e0; color: #d32f2f; }
+.event-class { background: #e8f5e9; color: #388e3c; }
+.event-personal { background: #fff3e0; color: #f57c00; }
+.event-exam { background: #fce4ec; color: #c2185b; }
+.event-deadline { background: #f3e5f5; color: #7b1fa2; }
+.event-workshop { background: #e0f7fa; color: #00695c; }
+
+/* Dark Theme Support */
+body.dark .calendar-widget {
+    background: #2d2d2d;
+}
+
+body.dark .calendar-title {
+    color: #fff;
+}
+
+body.dark .calendar-month-year {
+    color: #00f2fe;
+}
+
+body.dark .calendar-date {
+    color: #fff;
+}
+
+body.dark .calendar-date:hover {
+    background: #444;
+}
+
+body.dark .calendar-date.has-events {
+    background: #4a2c00;
+    border-color: #ff9800;
+}
+
+body.dark .calendar-date.has-events:hover {
+    background: #6d3f00;
+}
+
+body.dark .today-btn {
+    background: #00f2fe;
+    color: #000;
+}
+
+body.dark .today-btn:hover {
+    background: #4facfe;
+    color: #fff;
+}
+
+body.dark .date-view-content {
+    background: #2d2d2d;
+    color: #fff;
+}
+
+body.dark .date-view-header h3 {
+    color: #fff;
+}
+
+body.dark .date-event-item {
+    background: #1e1e1e;
+    border-left-color: #00f2fe;
+}
+
+body.dark .event-title {
+    color: #fff;
+}
+
+body.dark .event-description {
+    color: #ccc;
+}
+
+body.dark .quick-add-popup {
+    background: #2d2d2d;
+    color: #fff;
+}
+
+body.dark .quick-add-form input,
+body.dark .quick-add-form select,
+body.dark .quick-add-form textarea {
+    background: #333;
+    border-color: #444;
+    color: #fff;
+}
+
+body.dark .recurring-section {
+    background: #1e1e1e;
+    border-color: #444;
+}
+
+body.dark .recurring-days label {
+    background: #333;
+    border-color: #444;
+    color: #fff;
+}
+
+body.dark .recurring-days label:hover {
+    background: #444;
+    border-color: #00f2fe;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .calendar-date {
+        font-size: 0.75rem;
+    }
+    .calendar-days {
+        font-size: 0.75rem;
+    }
+    .calendar-month-year {
+        font-size: 1rem;
+    }
+    .event-preview {
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-date {
+        font-size: 0.7rem;
+    }
+    .calendar-days {
+        font-size: 0.7rem;
+    }
+    .calendar-month-year {
+        font-size: 0.9rem;
+    }
+    .quick-add-popup {
+        width: 95vw;
+        padding: 20px;
+    }
+    .date-view-content {
+        width: 95vw;
+        padding: 15px;
+    }
+    .recurring-days {
+        gap: 4px;
+    }
+    .recurring-days label {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+    }
+}
+
+/* Event Type Specific Colors for Calendar Dates */
+.calendar-date.event-type-personal,
+.calendar-date.has-events { /* Fallback for general events */
+    background: #fff3e0;
+    border: 2px solid #ff9800;
+}
+.calendar-date.event-type-personal:hover,
+.calendar-date.has-events:hover {
+    background: #ffe0b2;
+}
+
+.calendar-date.event-type-meeting { background-color: #e3f2fd; border: 2px solid #2196f3; }
+.calendar-date.event-type-meeting:hover { background-color: #d1e9fc; }
+.calendar-date.event-type-holiday { background-color: #ffe0e0; border: 2px solid #ff5722; }
+.calendar-date.event-type-holiday:hover { background-color: #ffd1d1; }
+.calendar-date.event-type-class { background-color: #e8f5e9; border: 2px solid #4caf50; }
+.calendar-date.event-type-class:hover { background-color: #dcedda; }
+.calendar-date.event-type-exam { background-color: #fce4ec; border: 2px solid #e91e63; }
+.calendar-date.event-type-exam:hover { background-color: #f8dae4; }
+.calendar-date.event-type-deadline { background-color: #f3e5f5; border: 2px solid #9c27b0; }
+.calendar-date.event-type-deadline:hover { background-color: #ebdcf1; }
+.calendar-date.event-type-workshop { background-color: #e0f7fa; border: 2px solid #00bcd4; }
+.calendar-date.event-type-workshop:hover { background-color: #ccecf2; }
+
+
+.calendar-date.has-events:hover {
+    background: #ffe0b2;
+    transform: scale(1.15);
+    z-index: 3;
+}
+
+/* Event Indicators */
+.event-indicator {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #ff5722;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+body.dark .calendar-date:hover {
+    background: #444;
+}
+
+body.dark .calendar-date.event-type-personal,
+body.dark .calendar-date.has-events {
+    background: #4a2c00;
+    border-color: #ff9800;
+}
+body.dark .calendar-date.event-type-personal:hover,
+body.dark .calendar-date.has-events:hover {
+    background: #6d3f00;
+}
+
+body.dark .calendar-date.event-type-meeting { background-color: #1a365d; border-color: #2196f3; }
+body.dark .calendar-date.event-type-meeting:hover { background-color: #254c81; }
+body.dark .calendar-date.event-type-holiday { background-color: #5a1a1a; border-color: #ff5722; }
+body.dark .calendar-date.event-type-holiday:hover { background-color: #7c2525; }
+body.dark .calendar-date.event-type-class { background-color: #1a472a; border-color: #4caf50; }
+body.dark .calendar-date.event-type-class:hover { background-color: #25623b; }
+body.dark .calendar-date.event-type-exam { background-color: #4a1f2d; border-color: #e91e63; }
+body.dark .calendar-date.event-type-exam:hover { background-color: #692c3f; }
+body.dark .calendar-date.event-type-deadline { background-color: #3a2044; border-color: #9c27b0; }
+body.dark .calendar-date.event-type-deadline:hover { background-color: #502c5d; }
+body.dark .calendar-date.event-type-workshop { background-color: #1b3c1a; border-color: #00bcd4; }
+body.dark .calendar-date.event-type-workshop:hover { background-color: #255227; }
+
+body.dark .today-btn {
+    background: #00f2fe;
+    color: #000;
+}
+
+/* Grid Layout Styles */
+.grid-stack {
+    background: transparent;
+}
+
+.grid-stack-item-content {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 15px 0 15px;
+    overflow: visible;
+}
+
+.timetable-container {
+    padding-bottom: 0 !important;
+}
+/* ... existing code ... */
+/* Make the content area scrollable if needed */
+.grid-stack-item-content {
+    /* overflow-y: auto; */ /* This was causing pop-ups to be cut off */
+    max-height: 100%;
+}
+
+/* Add some animation for the lecture info */
+.lecture-info {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.calendar-days {
+    text-align: center;
+    font-weight: 600;
+    color: #666;
+    padding: 2px;
+    font-size: clamp(0.5rem, 2vw, 0.8rem); /* Fully adaptive font */
+}
+
+.calendar-date {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    font-size: clamp(0.6rem, 2.5vw, 0.9rem); /* Fully adaptive font */
+    padding: 2px;
+    outline: none;
+}
+
+.calendar-btn:hover {
+    background: #e3f2fd;
+    transform: scale(1.1);
+}
+
+.today-date-display {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #4facfe;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #4facfe;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.today-date-display:hover {
+    background: #e3f2fd;
+    color: #1e88e5;
+}
+
+body.dark .today-date-display {
+    border-color: #00f2fe;
+    color: #00f2fe;
+}
+
+body.dark .today-date-display:hover {
+    background: #23272f;
+}
+
+.today-btn {
+    background: #4facfe;
+    color: white;
+}
+
+.lecture-info {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.lecture-info h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.lecture-info p {
+    color: #666;
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.lecture-info i {
+    width: 20px;
+    color: #4a90e2;
+    margin-right: 8px;
+}
+
+/* Add some hover effect */
+.lecture-info:hover {
+    background-color: #e9ecef;
+    transition: background-color 0.3s ease;
+}
+
+.widget.lecture-widget {
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    margin-top: -6px; /* Counteract container padding */
+}
+
+.lecture-info {
+    padding: 8px 12px;
+    border-radius: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.lecture-info.current {
+    background: linear-gradient(135deg, #43e794 0%, #37a36a 100%);
+    color: #fff;
+    text-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+.lecture-info.next {
+    background-color: var(--card-bg);
+    border: 1px solid #e0e0e0;
+}
+
+.lecture-info.empty {
+    background-color: var(--card-bg);
+    border: 1px solid #e0e0e0;
+    align-items: center;
+    text-align: center;
+    color: #888;
+}
+
+.lecture-info.empty i {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.lecture-info.empty h5 {
+    font-size: 1rem;
+}
+
+.lecture-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.lecture-subject-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lecture-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    color: white;
+}
+
+.lecture-status-dot.current {
+    background-color: #ffffff;
+    animation: pulse 2s infinite;
+}
+
+.lecture-status-dot.next {
+    background-color: #f39c12;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.lecture-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.lecture-info.current .lecture-title {
+    color: #fff;
+}
+
+.lecture-classroom {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0.9;
+}
+
+.lecture-tag {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 2px 7px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.lecture-info.next .lecture-tag {
+    background-color: #f39c12;
+}
+
+.lecture-info.current .lecture-details {
+    color: #fff;
+}
+
+.lecture-details {
+    font-size: 0.85rem;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.lecture-details i {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.time-divider {
+    opacity: 0.5;
+    margin: 0 5px;
+}
+
+.lecture-progress-container {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    height: 6px;
+    margin-bottom: 4px;
+    overflow: hidden;
+}
+
+.lecture-progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    transition: width 0.5s ease;
+}
+
+.time-markers {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    position: relative;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+#current-time-marker {
+    position: absolute;
+    transform: translateX(-50%);
+    background: white;
+    color: #37a36a;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.65rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.info-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: auto;
+}
+
+[data-theme="dark"] .lecture-info.next,
+[data-theme="dark"] .lecture-info.empty {
+    background-color: var(--card-bg);
+    border-color: #444;
+}
+
+[data-theme="dark"] .info-text {
+    color: #aaa;
+}
+
+/* Make the widget content more organized */
+.widget {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.widget-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+/* Add some spacing between widgets */
+.grid-stack-item {
+    margin-bottom: 20px;
+}
+
+/* Make the content area scrollable if needed */
+.grid-stack-item-content {
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+/* Add some animation for the lecture info */
+.lecture-info {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.lecture-progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.lecture-progress-container {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    height: 6px;
+    margin-bottom: 0;
+    overflow: visible;
+    flex-grow: 1;
+    position: relative;
+}
+
+.lecture-progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    transition: width 0.5s ease;
+}
+
+.time-label {
+    font-size: 0.7rem;
+    color: #fff;
+    opacity: 0.9;
+}
+
+#current-time-marker {
+    position: absolute;
+    top: 10px;
+    transform: translateX(-50%);
+    background: white;
+    color: #37a36a;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.65rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.info-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: auto;
+}
+
+[data-theme="dark"] .lecture-info.next,
+[data-theme="dark"] .lecture-info.empty {
+    background-color: var(--card-bg);
+    border-color: #444;
+}
+
+[data-theme="dark"] .info-text {
+    color: #aaa;
+}
+
+[data-theme="dark"] .lecture-info.next,
+[data-theme="dark"] .lecture-info.empty {
+    background-color: var(--card-bg, #2d2d2d);
+    border-color: #444;
+    color: #ccc;
+}
+
+[data-theme="dark"] .lecture-info.next .lecture-title,
+[data-theme="dark"] .lecture-info.empty h5 {
+    color: #fff;
+}
+
+[data-theme="dark"] .lecture-info.next .lecture-classroom,
+[data-theme="dark"] .lecture-info.next .lecture-classroom i {
+    color: #ccc;
+    opacity: 0.8;
+}
+
+[data-theme="dark"] .info-text,
+[data-theme="dark"] .lecture-info.empty p {
+    color: #aaa;
+}
+
+[data-theme="dark"] #current-time-marker {
+    background-color: #333;
+    color: #43e794;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* === Stack Widget Styles === */
+.lecture-stack-widget {
+    position: relative;
+    min-height: 120px;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.lecture-stack-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    color: white;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1;
+}
+
+.lecture-stack-card.active {
+    opacity: 1;
+    transform: translateX(0);
+    z-index: 2;
+}
+
+.lecture-stack-card.slide-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.lecture-stack-card.slide-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.lecture-stack-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.lecture-stack-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lecture-stack-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.lecture-stack-dot.current {
+    background: #4ade80;
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+}
+
+.lecture-stack-dot.next {
+    background: #fbbf24;
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+}
+
+.lecture-stack-dot.upcoming {
+    background: #60a5fa;
+    box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.7);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+    }
+}
+
+.lecture-stack-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.lecture-stack-tag {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.lecture-stack-details {
+    margin-top: 12px;
+}
+
+.lecture-stack-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+.lecture-stack-info i {
+    width: 16px;
+    text-align: center;
+}
+
+.lecture-stack-time {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lecture-stack-progress {
+    margin: 12px 0;
+}
+
+.lecture-stack-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.lecture-stack-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.lecture-stack-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.lecture-stack-indicator {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    gap: 4px;
+}
+
+.lecture-stack-indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.lecture-stack-indicator-dot.active {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.2);
+}
+
+/* Dark theme support */
+body.dark .lecture-stack-widget {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .lecture-stack-title {
+        font-size: 1.2rem;
+    }
+    
+    .lecture-stack-card {
+        padding: 15px;
+    }
+    
+    .lecture-stack-info {
+        font-size: 0.85rem;
+    }
+}
+
+/* === End of Stack Widget Styles === */
+
+/* Ensure chart container has proper height */
+.widget .widget-content canvas[id^="attendanceBarChart_"] {
+    max-height: 180px;
+    min-height: 150px;
+}
+
+/* Chart widget styles for new chart types */
+.widget .widget-content canvas[id^="monthlyTrendChart_"],
+.widget .widget-content canvas[id^="subjectAttendanceChart_"],
+.widget .widget-content canvas[id^="attendanceHeatmapChart_"] {
+    max-height: 250px;
+    min-height: 200px;
+}
+
+/* Specific styles for heatmap chart (horizontal) */
+.widget .widget-content canvas[id^="attendanceHeatmapChart_"] {
+    max-height: 300px;
+    min-height: 250px;
+}
+
+/* Widget title styles for chart widgets */
+.widget .widget-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Responsive adjustments for chart widgets */
+@media (max-width: 768px) {
+    .widget .widget-content canvas[id^="monthlyTrendChart_"],
+    .widget .widget-content canvas[id^="subjectAttendanceChart_"],
+    .widget .widget-content canvas[id^="attendanceHeatmapChart_"] {
+        max-height: 200px;
+        min-height: 150px;
+    }
+    
+    .widget .widget-title {
+        font-size: 0.9rem;
+    }
+}
+
+.student-list-widget .widget-content {
+  overflow-y: auto;
+  resize: vertical;
+  min-height: 100px;
+  max-height: 500px;
+  height: 340px;
+}
+
+.selected-row {
+    background-color: #ff9800 !important; /* Bright orange for light mode */
+    color: #fff !important;
+    font-weight: bold;
+    box-shadow: 0 0 0 2px #ff9800, 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid #ff9800;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+body.dark .selected-row {
+    background-color: #ffd600 !important; /* Bright yellow for dark mode */
+    color: #222 !important;
+    font-weight: bold;
+    box-shadow: 0 0 0 2px #ffd600, 0 2px 8px rgba(0,0,0,0.18);
+    border-left: 5px solid #ffd600;
+    transition: background 0.2s, box-shadow 0.2s;
+}

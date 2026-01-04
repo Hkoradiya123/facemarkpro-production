@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance - {{ student_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #357abd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #f0f2f5;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+        }
+
+        .nav-menu {
+            margin-top: 30px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
+            backdrop-filter: blur(25px) saturate(200%);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.25),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .subtitle {
+            color: #34495e;
+            font-size: 1.2rem;
+            font-weight: 400;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Cards with Glassmorphism */
+        .card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
+            backdrop-filter: blur(25px) saturate(200%);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.25),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-12px) translateZ(25px) rotateY(2deg);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(255, 255, 255, 0.15),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.3));
+            transition: width 0.5s ease;
+        }
+
+        .card:hover .card-header::after {
+            width: 100%;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .card {
+            animation: fastFadeIn 0.5s ease-in-out;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fastFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardEntryFromCircle {
+            0% {
+                opacity: 0;
+                transform: translate(calc(100vw - 22.5vh), 50vh) scale(0);
+                clip-path: circle(0% at 50% 50%);
+            }
+            30% {
+                opacity: 1;
+                transform: translate(calc(100vw - 22.5vh), 50vh) scale(0.05);
+                clip-path: circle(5% at 50% 50%);
+            }
+            60% {
+                transform: translate(50%, 50%) scale(0.5);
+                clip-path: circle(30% at 50% 50%);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+                clip-path: circle(100% at 50% 50%);
+            }
+        }
+
+        .attendance-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .percentage-high {
+            color: var(--success-color);
+        }
+
+        .percentage-medium {
+            color: var(--warning-color);
+        }
+
+        .percentage-low {
+            color: var(--danger-color);
+        }
+
+        /* Progress Bars */
+        .progress {
+            height: 10px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+        }
+
+        /* Attendance Records */
+        .attendance-record {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-present {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .record-absent {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .record-date {
+            font-weight: 600;
+        }
+
+        .record-status {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Floating Shapes for Background */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .shape.circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .shape.square {
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.5);
+            transform: rotate(45deg);
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 26px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .shape.star {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.6);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100%) rotate(0deg) scale(0.5); opacity: 0; }
+            25% { transform: translateY(50%) rotate(90deg) scale(0.8); opacity: 0.3; }
+            50% { transform: translateY(25%) rotate(180deg) scale(1); opacity: 0.5; }
+            75% { transform: translateY(0%) rotate(270deg) scale(0.8); opacity: 0.3; }
+            100% { transform: translateY(-10%) rotate(360deg) scale(0.5); opacity: 0; }
+        }
+
+        .shape:nth-child(1) { animation-delay: 0s; left: 5%; }
+        .shape:nth-child(2) { animation-delay: -4s; left: 10%; }
+        .shape:nth-child(3) { animation-delay: -8s; left: 15%; }
+        .shape:nth-child(4) { animation-delay: -12s; left: 20%; }
+        .shape:nth-child(5) { animation-delay: -16s; left: 25%; }
+        .shape:nth-child(6) { animation-delay: -20s; left: 30%; }
+        .shape:nth-child(7) { animation-delay: -24s; left: 35%; }
+        .shape:nth-child(8) { animation-delay: -28s; left: 40%; }
+        .shape:nth-child(9) { animation-delay: -32s; left: 45%; }
+        .shape:nth-child(10) { animation-delay: -36s; left: 50%; }
+        .shape:nth-child(11) { animation-delay: -40s; left: 55%; }
+        .shape:nth-child(12) { animation-delay: -44s; left: 60%; }
+        .shape:nth-child(13) { animation-delay: -48s; left: 65%; }
+        .shape:nth-child(14) { animation-delay: -52s; left: 70%; }
+        .shape:nth-child(15) { animation-delay: -56s; left: 75%; }
+        .shape:nth-child(16) { animation-delay: -60s; left: 80%; }
+        .shape:nth-child(17) { animation-delay: -64s; left: 85%; }
+        .shape:nth-child(18) { animation-delay: -68s; left: 90%; }
+        .shape:nth-child(19) { animation-delay: -72s; left: 95%; }
+        .shape:nth-child(20) { animation-delay: -76s; left: 100%; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="student-avatar">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <h5>{{ student_name }}</h5>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-item">
+                <a href="/student/dashboard" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/student/timetable" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    Timetable
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/student/attendance" class="nav-link active">
+                    <i class="fas fa-chart-bar"></i>
+                    Attendance
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/student/profile" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/student/change-password" class="nav-link">
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/student/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Subject-wise Attendance -->
+        {% for subject_data in detailed_attendance %}
+            {% if subject_data.subject != 'DBMS' %}
+                <div class="card subject-card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-book"></i> {{ subject_data.subject }}
+                                </h5>
+                                <small><i class="fas fa-chalkboard-teacher"></i> {{ subject_data.faculty }}</small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="attendance-percentage {% if subject_data.percentage >= 75 %}percentage-high{% elif subject_data.percentage >= 60 %}percentage-medium{% else %}percentage-low{% endif %}">
+                                    {{ subject_data.percentage }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Attendance Progress</span>
+                                    <span>{{ subject_data.present_classes }}/{{ subject_data.total_classes }} classes</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar {% if subject_data.percentage >= 75 %}bg-success{% elif subject_data.percentage >= 60 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         style="width: {{ subject_data.percentage | default(0) }}%"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="text-success">
+                                            <i class="fas fa-check-circle fa-2x"></i>
+                                            <div class="fw-bold">{{ subject_data.present_classes }}</div>
+                                            <small>Present</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-danger">
+                                            <i class="fas fa-times-circle fa-2x"></i>
+                                            <div class="fw-bold">{{ subject_data.total_classes - subject_data.present_classes }}</div>
+                                            <small>Absent</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attendance Records -->
+                        <div class="mt-3">
+                            <h6><i class="fas fa-history"></i> Recent Attendance Records</h6>
+                            {% if subject_data.attendance_records %}
+                                <div class="row">
+                                    {% for record in subject_data.attendance_records[:10] %}
+                                        <div class="col-md-6 mb-2">
+                                            <div class="attendance-record {% if record.status == 'Present' %}record-present{% else %}record-absent{% endif %}">
+                                                <div>
+                                                    <div class="record-date">{{ record.date }}</div>
+                                                </div>
+                                                <div class="record-status {% if record.status == 'Present' %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
+                                                    {{ record.status }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted py-3">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                    <p>No attendance records available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Subject-wise Summary Container -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Subject-wise Attendance Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% set fake_attendance = [
+                        {'subject': 'Mathematics', 'total_present': 18, 'total_absent': 2},
+                        {'subject': 'Physics', 'total_present': 16, 'total_absent': 4},
+                        {'subject': 'Chemistry', 'total_present': 15, 'total_absent': 5},
+                        {'subject': 'Biology', 'total_present': 17, 'total_absent': 3},
+                        {'subject': 'English', 'total_present': 19, 'total_absent': 1},
+                        {'subject': 'History', 'total_present': 14, 'total_absent': 6},
+                        {'subject': 'Geography', 'total_present': 16, 'total_absent': 4},
+                        {'subject': 'Computer Science', 'total_present': 18, 'total_absent': 2}
+                    ] %}
+                    {% for subject in fake_attendance %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-info">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">{{ subject.subject }}</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="text-success">
+                                                <i class="fas fa-check-circle fa-2x mb-1"></i>
+                                                <div class="fw-bold">{{ subject.total_present }}</div>
+                                                <small>Present</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-danger">
+                                                <i class="fas fa-times-circle fa-2x mb-1"></i>
+                                                <div class="fw-bold">{{ subject.total_absent }}</div>
+                                                <small>Absent</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Total Classes: {{ subject.total_present + subject.total_absent }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

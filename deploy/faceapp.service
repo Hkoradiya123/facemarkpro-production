@@ -1,0 +1,17 @@
+[Unit]
+Description=FaceMak Pro (Flask) via Gunicorn
+After=network.target
+
+[Service]
+User=faceapp
+Group=faceapp
+WorkingDirectory=/opt/faceapp
+EnvironmentFile=/opt/faceapp/.env
+ExecStart=/opt/faceapp/venv/bin/gunicorn --workers 3 --timeout 120 --bind 127.0.0.1:8000 run:app
+Restart=always
+RestartSec=3
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+

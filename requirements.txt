@@ -1,0 +1,14 @@
+Flask==2.3.3
+pymongo==4.5.0
+bcrypt==4.0.1
+opencv-python==4.8.1.78
+numpy==1.24.3
+pandas==2.0.3
+Werkzeug==2.3.7
+insightface==0.7.3
+Pillow==10.0.1
+python-dotenv==1.0.0
+Flask-Session==0.5.0 
+dnspython==2.4.2
+gunicorn
+onnxruntime

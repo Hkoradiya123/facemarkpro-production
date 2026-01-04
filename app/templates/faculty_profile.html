@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Modal and blur styles */
+        .modal-blur {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.18);
+            backdrop-filter: blur(6px);
+            z-index: 1001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-blur.active {
+            display: flex;
+        }
+        .change-password-modal {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 32px 28px 24px 28px;
+            max-width: 350px;
+            width: 100%;
+            text-align: left;
+            position: relative;
+        }
+        .change-password-modal h5 {
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 18px;
+        }
+        .close-modal {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 1.3rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .form-control {
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+        .btn-save {
+            background: #1976d2;
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 24px;
+            font-weight: 500;
+            border: none;
+            margin-top: 8px;
+        }
+        .btn-save:hover {
+            background: #1251a3;
+        }
+        body {
+            background: #f8f9fa;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        .profile-container {
+            max-width: 700px;
+            margin: 72px auto;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+            padding: 56px 48px 40px 48px;
+        }
+        .profile-photo {
+            width: 160px;
+            height: 160px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 4px solid #e0e0e0;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            margin-bottom: 32px;
+        }
+        .profile-title {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #1976d2;
+        }
+        .profile-info {
+            margin-bottom: 32px;
+        }
+        .profile-info label {
+            font-weight: 600;
+            color: #888;
+            margin-bottom: 6px;
+            display: block;
+            font-size: 1.2rem;
+        }
+        .profile-info span {
+            font-size: 1.3rem;
+            color: #333;
+        }
+        .profile-actions {
+            text-align: center;
+            margin-top: 32px;
+        }
+        .btn-edit, .btn-dashboard {
+            background: #1976d2;
+            color: #fff;
+            border-radius: 12px;
+            padding: 14px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            margin: 12px 10px 0 10px;
+            transition: background 0.2s;
+        }
+        .btn-edit:hover, .btn-dashboard:hover {
+            background: #1251a3;
+        }
+        .profile-details {
+            margin-top: 32px;
+            background: #f5f6fa;
+            border-radius: 16px;
+            padding: 32px 28px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .profile-details h6 {
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 18px;
+            font-size: 1.3rem;
+        }
+        .profile-details ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .profile-details li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 1.15rem;
+        }
+        .profile-details li:last-child {
+            border-bottom: none;
+        }
+        .profile-details .fa {
+            color: #1976d2;
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+         #loader-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.3);
+        backdrop-filter: blur(5px);
+        z-index: 9999; /* Make sure it's on top of everything */
+        display: none; /* Hidden by default */
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loader-spinner {
+        border: 8px solid #f3f3f3; /* Light grey circle */
+        border-top: 8px solid #1976d2; /* Blue to match your theme */
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    </style>
+</head>
+<body>
+    <div id="loader-overlay">
+        <div class="loader-spinner"></div>
+    </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div style="max-width:700px;margin:32px auto 0 auto;">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'success' if category=='success' else 'danger' if category=='error' else 'info' }} alert-dismissible fade show" role="alert" style="font-size:1.1rem;">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="profile-container">
+            <div class="profile-row" style="display: flex; gap: 48px; align-items: flex-start;">
+                <div class="profile-left" style="flex: 1; text-align: center;">
+                    <img src="{{ url_for('static', filename='img/faculty.jpg') }}" alt="Profile Photo" class="profile-photo">
+                    <div class="profile-title">{{ faculty_name }}</div>
+                    <div class="profile-info">
+                        <label>Email</label>
+                        <span><i class="fa fa-envelope"></i> {{ faculty_email }}</span>
+                    </div>
+                    <div class="profile-info">
+                        <label>Role</label>
+                        <span><i class="fa fa-user-tie"></i> {{ role }}</span>
+                    </div>
+                    <div class="profile-info">
+                        <label>Department</label>
+                        <span><i class="fa fa-building"></i> {{ department }}</span>
+                    </div>
+                </div>
+                <div class="profile-right" style="flex: 1.2;">
+                    <div class="profile-details text-start">
+                        <h6>Additional Details</h6>
+                        <ul>
+                            <li><i class="fa fa-id-badge"></i> Faculty ID: {{ faculty_id or 'N/A' }}</li>
+                            <li><i class="fa fa-phone"></i> Phone: {{ phone or 'N/A' }}</li>
+                            <li><i class="fa fa-calendar-alt"></i> Joined: {{ joined_date or 'N/A' }}</li>
+                            <li><i class="fa fa-graduation-cap"></i> Qualification: {{ qualification or 'N/A' }}</li>
+                            <li><i class="fa fa-map-marker-alt"></i> Address: {{ address or 'N/A' }}</li>
+                        </ul>
+                    </div>
+                    <div class="profile-actions" style="margin-top: 36px; text-align: left;">
+                        <a href="/dashboard" class="btn btn-dashboard"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                        <button type="button" class="btn btn-edit" onclick="openChangePasswordModal()"><i class="fas fa-key"></i> Change Password</button>
+                        <button type="button" class="btn btn-edit" style="background:#43a047; margin-left:10px;" onclick="openEditInfoModal()"><i class="fas fa-edit"></i> Edit Info</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Change Password Modal -->
+            <div class="modal-blur" id="changePasswordModal">
+                <form class="change-password-modal" method="POST" action="/change-password" onsubmit="return submitChangePassword(this)">
+                    <button type="button" class="close-modal" onclick="closeChangePasswordModal()">&times;</button>
+                    <h5>Change Password</h5>
+                    <label class="form-label" for="current_password">Current Password</label>
+                    <input type="password" class="form-control" name="current_password" id="current_password" required>
+                    <label class="form-label" for="new_password">New Password</label>
+                    <input type="password" class="form-control" name="new_password" id="new_password" required>
+                    <input type="hidden" name="email" value="{{ faculty_email }}">
+                    <button type="submit" class="btn btn-save w-100"><i class="fas fa-save"></i> Save</button>
+                </form>
+            </div>
+            <!-- Edit Info Modal -->
+                    <div class="modal-blur" id="editInfoModal">
+                        <form class="change-password-modal" method="POST" action="{{ url_for('faculty.edit_faculty_info') }}" onsubmit="return submitEditInfo(this)">
+                    <button type="button" class="close-modal" onclick="closeEditInfoModal()">&times;</button>
+                    <h5>Edit Faculty Info</h5>
+                    <label class="form-label" for="edit_phone">Phone</label>
+                    <input type="text" class="form-control" name="phone" id="edit_phone" value="{{ phone }}" required>
+                    <label class="form-label" for="edit_qualification">Qualification</label>
+                    <input type="text" class="form-control" name="qualification" id="edit_qualification" value="{{ qualification }}" required>
+                    <label class="form-label" for="edit_address">Address</label>
+                    <input type="text" class="form-control" name="address" id="edit_address" value="{{ address }}" required>
+                    <label class="form-label" for="edit_password">Confirm Password</label>
+                    <input type="password" class="form-control" name="password" id="edit_password" required>
+                    <input type="hidden" name="email" value="{{ faculty_email }}">
+                    <button type="submit" class="btn btn-save w-100"><i class="fas fa-save"></i> Save Changes</button>
+                </form>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+<script>
+    function openChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function openEditInfoModal() {
+        document.getElementById('editInfoModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditInfoModal() {
+        document.getElementById('editInfoModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // --- UPDATED FUNCTIONS ---
+
+    function submitChangePassword(form) {
+        // Show the loader
+        document.getElementById('loader-overlay').style.display = 'flex';
+        // Allow the form to submit
+        return true;
+    }
+
+    function submitEditInfo(form) {
+        // Show the loader
+        document.getElementById('loader-overlay').style.display = 'flex';
+        // Allow the form to submit
+        return true;
+    }
+</script>
+<script>
+    function openChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    function submitChangePassword(form) {
+        closeChangePasswordModal();
+        return true;
+    }
+    function openEditInfoModal() {
+        document.getElementById('editInfoModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeEditInfoModal() {
+        document.getElementById('editInfoModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    function submitEditInfo(form) {
+        closeEditInfoModal();
+        return true;
+    }
+</script>
+</html>

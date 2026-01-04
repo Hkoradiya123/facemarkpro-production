@@ -1,0 +1,10 @@
+__pycache__/
+.venv/
+venv/
+.env
+*.pyc
+encodings/*.pickle
+temp_uploads/
+split_encodings/
+/*.egg-info
+/.env

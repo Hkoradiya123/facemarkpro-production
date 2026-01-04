@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FaceMark Pro App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body class="light">
+  <div class="fade-overlay" id="fadeOverlay"></div>
+
+  <div class="theme-toggle-container">
+    <label class="theme-switch">
+      <input type="checkbox" class="theme-switch__checkbox">
+      <div class="theme-switch__container">
+        <div class="theme-switch__clouds"></div>
+        <div class="theme-switch__stars-container">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"></path>
+          </svg>
+        </div>
+        <div class="theme-switch__circle-container">
+          <div class="theme-switch__sun-moon-container">
+            <div class="theme-switch__moon">
+              <div class="theme-switch__spot"></div>
+              <div class="theme-switch__spot"></div>
+              <div class="theme-switch__spot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </label>
+  </div>
+
+  <div class="login-container" style="max-width: 1100px; width: 95%;">
+    <div class="brand">FaceMark Pro</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+      <button
+        hx-get="/multilogin"
+        hx-target="#content"
+        hx-push-url="true"
+        hx-select="body"
+        style="background-color:#4facfe;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;">
+        Multilogin
+      </button>
+      <button
+        hx-get="/dashboard"
+        hx-target="#content"
+        hx-push-url="true"
+        hx-select="body"
+        style="background-color:#4facfe;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;">
+        Faculty Dashboard
+      </button>
+      <button
+        hx-get="/attendance"
+        hx-target="#content"
+        hx-push-url="true"
+        hx-select="body"
+        style="background-color:#4facfe;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;">
+        Attendance
+      </button>
+      <button
+        hx-get="/students"
+        hx-target="#content"
+        hx-push-url="true"
+        hx-select="body"
+        style="background-color:#4facfe;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;">
+        Students
+      </button>
+      <button
+        hx-get="/student/dashboard"
+        hx-target="#content"
+        hx-push-url="true"
+        hx-select="body"
+        style="background-color:#4facfe;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;">
+        Student Dashboard
+      </button>
+    </div>
+
+    <div id="content" style="min-height:60vh; background:#fff; border-radius:12px; padding:8px; overflow:auto;"></div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+
+

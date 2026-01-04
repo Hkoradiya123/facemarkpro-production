@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/gridstack@7.2.3/dist/gridstack.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #4a90e2;
+            --card-bg: #f5f6fa;
+            --text-color: #333333;
+            --sidebar-bg: #f8f9fa;
+            --input-bg: #fff;
+            --input-border: #e0e0e0;
+            --btn-bg: #1976d2;
+            --btn-bg-upload: #00b894;
+            --btn-text: #fff;
+            --btn-hover: #1251a3;
+            --btn-upload-hover: #009e74;
+            --alert-bg: rgba(79,172,254,0.09);
+            --alert-text: #1976d2;
+            --success-bg: #e8f5e9;
+            --success-border: #4caf50;
+            --error-bg: #ffebee;
+            --error-border: #f44336;
+            --warning-bg: #fff3e0;
+            --warning-border: #ff9800;
+        }
+        body.dark {
+            --card-bg: #23272f;
+            --text-color: #e0e0e0;
+            --sidebar-bg: #181c24;
+            --input-bg: #23272f;
+            --input-border: #333;
+            --btn-bg: #1565c0;
+            --btn-bg-upload: #00b894;
+            --btn-text: #fff;
+            --btn-hover: #0d47a1;
+            --btn-upload-hover: #009e74;
+            --alert-bg: #223a5f;
+            --alert-text: #aeefff;
+            --success-bg: #1b5e20;
+            --success-border: #4caf50;
+            --error-bg: #b71c1c;
+            --error-border: #f44336;
+            --warning-bg: #e65100;
+            --warning-border: #ff9800;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            /* Improve mobile scrolling */
+            -webkit-text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                /* Improve touch scrolling performance */
+                -webkit-overflow-scrolling: touch;
+                /* Prevent pull-to-refresh on mobile */
+                overscroll-behavior-y: none;
+                /* Prevent zoom on input focus */
+                touch-action: manipulation;
+            }
+
+            /* Ensure mobile header stays fixed */
+            .d-md-none[style*="position:sticky"] {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1100;
+            }
+        }
+        /* Modern Sidebar Styles (copied from face_registrations_summary.html) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            padding: 24px 20px;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08), 0 0 40px rgba(0, 0, 0, 0.04);
+            border-right: 1px solid rgba(0, 0, 0, 0.06);
+            z-index: 1200;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+        body.dark .sidebar {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.2);
+            border-right-color: rgba(255, 255, 255, 0.1);
+        }
+        .profile-section {
+            text-align: center;
+            padding: 24px 0 28px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+        body.dark .profile-section {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+        .profile-photo {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+        }
+        .profile-photo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+        }
+        body.dark .profile-photo {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .profile-section h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+        .nav-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        .nav-link:hover::before {
+            transform: scaleY(1);
+        }
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            font-size: 16px;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+        body.dark .nav-link i {
+            color: #94a3b8;
+        }
+        .nav-link:hover i {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+            transform: translateX(2px);
+        }
+        .nav-link.active::before {
+            transform: scaleY(1);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .nav-link.active i {
+            color: #ffffff !important;
+        }
+        .sidebar-footer {
+            position: absolute;
+            bottom: 24px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        body.dark .sidebar-footer {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-link.text-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff !important;
+        }
+        .nav-link.text-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+        .nav-link.text-danger i {
+            color: #ffffff !important;
+        }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 260px;
+                padding: 20px 16px;
+            }
+            .nav-link {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+            .profile-photo {
+                width: 64px;
+                height: 64px;
+            }
+        }
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        .subject-sql { background: #fff3e0 !important; color: #e65100; }
+        .subject-java { background: #f3e5f5 !important; color: #6a1b9a; }
+        .subject-math { background: #e8f5e9 !important; color: #1b5e20; }
+        .subject-english { background: #fce4ec !important; color: #ad1457; }
+        .subject-physics { background: #e3f2fd !important; color: #1565c0; }
+        .subject-chemistry { background: #fffde7 !important; color: #f9a825; }
+        .subject-biology { background: #f1f8e9 !important; color: #33691e; }
+        /* Add more subject color codes as needed */
+        [data-theme="dark"] .timetable th,
+        [data-theme="dark"] .timetable td {
+            border-color: #444;
+        }
+        [data-theme="dark"] .timetable th,
+        [data-theme="dark"] .day-cell {
+            background-color: #2d2d2d;
+        }
+        [data-theme="dark"] .slot {
+            filter: brightness(0.85);
+        }
+        @media (max-width: 1200px) {
+            .timetable th, .timetable td {
+                font-size: 0.65rem;
+                padding: 0;
+                min-width: 18px;
+                max-width: 18px;
+                height: 12px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .timetable-block {
+                max-width: 700px;
+                margin: 0 auto;
+            }
+        }
+        .lecture-stack-widget {
+            position: relative;
+            min-height: 120px;
+            height: 100%;
+        }
+        .lecture-card {
+            position: absolute;
+            width: 100%;
+            top: 0; left: 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 18px 20px 12px 20px;
+            opacity: 0;
+            z-index: 0;
+            transition: opacity 0.6s, z-index 0.6s;
+        }
+        .lecture-card.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        /* Widget Selection Modal Styles */
+        .widget-selection-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .widget-selection-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .widget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .widget-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .widget-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #4facfe;
+        }
+
+        .widget-option i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #4facfe;
+        }
+
+        .widget-option h5 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .add-widget-btn {
+            background: #ff9800; /* Orange shade */
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
+            font-size: 1.6rem;
+            padding: 0;
+        }
+
+        .add-widget-btn:hover {
+            background: #fb8c00; /* Darker orange on hover */
+            transform: translateY(-2px) scale(1.08);
+            box-shadow: 0 4px 16px rgba(255, 152, 0, 0.22);
+        }
+
+        .add-widget-btn i {
+            font-size: 1.6rem;
+            margin: 0;
+        }
+
+        /* Dark theme support for modal */
+        [data-theme="dark"] .widget-selection-content {
+            background: #2d2d2d;
+            color: white;
+        }
+
+        [data-theme="dark"] .widget-option {
+            background: #1e1e1e;
+            border-color: #333;
+            color: white;
+        }
+
+        [data-theme="dark"] .widget-option:hover {
+            border-color: #00f2fe;
+        }
+
+        /* Empty state message */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #4facfe;
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="dark"] .empty-state {
+            color: #aaa;
+        }
+        .widget{
+            padding: 5px;
+        }
+        .grid-stack-item-content{
+            padding: 6px;
+            padding-top: 8px;
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 260px;
+                padding: 20px 16px;
+            }
+            .nav-link {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+            .profile-photo {
+                width: 64px;
+                height: 64px;
+            }
+        }
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        /* Main content area with enhanced mobile scrolling */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 32px 0;
+            min-height: 100vh;
+            background: var(--card-bg);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            overscroll-behavior-y: contain;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px 0;
+                /* Enhanced mobile scrolling */
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-y: contain;
+                scroll-snap-type: y proximity;
+                /* Prevent horizontal scroll on mobile */
+                overflow-x: hidden;
+                /* Ensure content doesn't get cut off */
+                min-height: calc(100vh - 60px);
+                max-height: calc(100vh - 60px);
+            }
+
+            /* Improve touch targets and scrolling performance */
+            .grid-stack {
+                touch-action: pan-y;
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+            }
+
+            /* Prevent zoom on double tap */
+            .main-content * {
+                touch-action: manipulation;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            <a href="{{ url_for('faculty.profile') }}" style="display:inline-block;">
+                <img src="{{ url_for('static', filename='img/faculty.jpg') }}" alt="Profile Photo" class="profile-photo" style="cursor:pointer;">
+            </a>
+            <h5>{{ faculty }}</h5>
+        </div>
+        
+        <div class="nav-links">
+            <ul class="nav-links">
+                <li style="display: flex; align-items: center; gap: 0.5rem;">
+                  <a href="{{ url_for('faculty.dashboard') }}" class="nav-link{% if request.path == url_for('faculty.dashboard') %} active{% endif %}"><i class="fas fa-home"></i> Dashboard</a>
+                  {% if request.path == url_for('faculty.dashboard') %}
+                  <div class="icon-plus-btn" onclick="openWidgetModal()" tabindex="0" aria-label="Add Widget">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" style="display:inline-block; vertical-align:middle;">
+                      <path d="M12 5v14m-7-7h14" stroke="#1976d2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                  </div>
+                  {% endif %}
+                </li>
+                <li><a href="{{ url_for('attendance.attendance') }}" class="nav-link{% if request.path == url_for('attendance.attendance') %} active{% endif %}"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                <li><a href="{{ url_for('attendance.manual_attendance') }}" class="nav-link{% if request.path == url_for('attendance.manual_attendance') %} active{% endif %}"><i class="fas fa-user-check"></i> Manual Attendance</a></li>
+                <li><a href="{{ url_for('students.register_student_face') }}" class="nav-link{% if request.path == url_for('students.register_student_face') %} active{% endif %}"><i class="fas fa-user-plus"></i> Register Face</a></li>
+                <li><a href="{{ url_for('students.face_registrations_summary') }}" class="nav-link{% if request.path == url_for('students.face_registrations_summary') %} active{% endif %}"><i class="fas fa-list"></i> Face Summary</a></li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="nav-link text-danger">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+            <label class="switch">
+              <input type="checkbox" class="theme-switch-checkbox">
+              <span class="slider"></span>
+            </label>            
+        </div>
+      </div>
+
+    <!-- Mobile Header -->
+    <div class="d-md-none" style="position:sticky; top:0; z-index:1100; background: var(--card-bg); padding: 10px 12px; border-bottom:1px solid var(--input-border); display:flex; align-items:center; gap:8px;">
+        <button id="sidebarToggle" class="btn btn-outline-primary btn-sm" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+        <div style="font-weight:700;">Dashboard</div>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="grid-stack">
+            <!-- Empty state message -->
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-plus-circle"></i>
+                <h3>No Widgets Added</h3>
+                <p>Click the "Add Widget" button in the sidebar to customize your dashboard</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay for mobile -->
+    <div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:1150;"></div>
+
+    <!-- Widget Selection Modal -->
+    <div class="widget-selection-modal" id="widgetModal">
+        <div class="widget-selection-content">
+            <h3>Add Widgets</h3>
+            <p>Select widgets to add to your dashboard</p>
+            <div class="widget-grid">
+                <div class="widget-option" onclick="addWidget('timetable')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h5>Timetable</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('lecture')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h5>Current Lecture</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('attendance')">
+                    <i class="fas fa-chart-bar"></i>
+                    <h5>Attendance Overview</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('monthly_trend')">
+                    <i class="fas fa-chart-line"></i>
+                    <h5>Monthly Attendance Trend</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('subject_attendance')">
+                    <i class="fas fa-chart-bar"></i>
+                    <h5>Subject-wise Attendance</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('attendance_heatmap')">
+                    <i class="fas fa-fire"></i>
+                    <h5>Attendance Heatmap</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('students')">
+                    <i class="fas fa-user-graduate"></i>
+                    <h5>Student List</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('notifications')">
+                    <i class="fas fa-bell"></i>
+                    <h5>Notifications</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('quickstats')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h5>Quick Stats</h5>
+                </div>
+                <div class="widget-option" onclick="addWidget('calendar')">
+                    <i class="fas fa-calendar"></i>
+                    <h5>Calendar</h5>
+                </div>
+            </div>
+            <button class="btn btn-secondary mt-3" onclick="closeWidgetModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Quick Add Event Popup -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="quick-add-popup" id="quickAddPopup">
+        <div class="quick-add-header">
+            <div class="quick-add-title">Add Event</div>
+            <button class="close-popup" onclick="closeQuickAdd()">×</button>
+        </div>
+        <form class="quick-add-form" onsubmit="saveEvent(event)">
+            <input type="text" placeholder="Event Title" required>
+            <select required>
+                <option value="">Select Event Type</option>
+                <option value="meeting">Meeting</option>
+                <option value="holiday">Holiday</option>
+                <option value="class">Class</option>
+                <option value="personal">Personal</option>
+                <option value="exam">Exam</option>
+                <option value="deadline">Deadline</option>
+                <option value="workshop">Workshop</option>
+            </select>
+            <input type="date" id="eventDate" required>
+            <input type="time" placeholder="Time (optional)">
+            <textarea placeholder="Description (optional)" rows="3"></textarea>
+            <button type="submit">Save Event</button>
+        </form>
+    </div>
+
+    <!-- Add this before closing body tag -->
+    <div class="popup-overlay" id="confirmationOverlay"></div>
+    <div class="confirmation-popup" id="confirmationPopup">
+        <h4>Remove Widget?</h4>
+        <div class="confirmation-buttons">
+            <button class="confirm-btn" onclick="confirmRemove()">Yes, Remove</button>
+            <button class="cancel-btn" onclick="cancelRemove()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@7.2.3/dist/gridstack-all.js"></script>
+    <script>
+        // Initialize GridStack
+        var grid = GridStack.init({
+            cellHeight: 80,
+            margin: 10,
+            column: 12,
+            resizable: {
+                handles: 'e,se,s,sw,w'
+            },
+            float: true,
+            animate: true
+        });
+
+        // Sidebar Toggle (mobile)
+        (function(){
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            function openSidebar(){
+                if (!sidebar) return;
+                sidebar.classList.add('open');
+                if (overlay) overlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSidebar(){
+                if (!sidebar) return;
+                sidebar.classList.remove('open');
+                if (overlay) overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            if (toggleBtn){ toggleBtn.addEventListener('click', openSidebar); }
+            if (overlay){ overlay.addEventListener('click', closeSidebar); }
+            document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeSidebar(); });
+            navLinks.forEach(a => a.addEventListener('click', closeSidebar));
+        })();
+
+        // Track added widgets
+        let addedWidgets = new Set();
+
+        // Update the saveLayout function to include more widget data
+        function saveLayout() {
+            const serializedData = grid.save();
+            const layoutData = serializedData.map(item => ({
+                x: item.x,
+                y: item.y,
+                w: item.w,
+                h: item.h,
+                type: item.type,
+                id: item.id
+            }));
+            
+            // Save to localStorage with faculty-specific key
+            const facultyName = '{{ faculty }}';
+            localStorage.setItem(`widgetLayout_${facultyName}`, JSON.stringify(layoutData));
+        }
+
+        // Update the loadLayout function to load faculty-specific layout
+        function loadLayout() {
+            const facultyName = '{{ faculty }}';
+            const savedLayout = localStorage.getItem(`widgetLayout_${facultyName}`);
+            
+            if (savedLayout) {
+                const layout = JSON.parse(savedLayout);
+                
+                // Clear existing widgets
+                grid.removeAll();
+                addedWidgets.clear();
+
+                // Add each widget from saved layout
+                layout.forEach(item => {
+                    if (item.type) {
+                        const savedConfig = {
+                            x: item.x,
+                            y: item.y,
+                            w: item.w,
+                            h: item.h,
+                            id: item.id
+                        };
+                        addWidget(item.type, savedConfig);
+                    }
+                });
+
+                // Initialize charts after all widgets are loaded
+                setTimeout(() => {
+                    if (typeof initializeCharts === 'function') {
+                        initializeCharts();
+                    }
+                }, 200);
+
+                // Update widget options
+                updateWidgetOptions();
+            } else {
+                // If no saved layout, add a default set of widgets
+                addWidget('timetable', { x: 0, y: 0, w: 4, h: 2 });
+                addWidget('attendance', { x: 4, y: 0, w: 4, h: 2 });
+                addWidget('lecture', { x: 8, y: 0, w: 4, h: 2 });
+
+                // Initialize charts after adding default widgets
+                setTimeout(() => {
+                    if (typeof initializeCharts === 'function') {
+                        initializeCharts();
+                    }
+                }, 200);
+
+                // Update widget options
+                updateWidgetOptions();
+            }
+        }
+
+        // Add function to clear layout for current faculty
+        function clearLayout() {
+            const facultyName = '{{ faculty }}';
+            localStorage.removeItem(`widgetLayout_${facultyName}`);
+            grid.removeAll();
+            addedWidgets.clear();
+            
+            // Show empty state
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // Widget Modal Functions
+        function openWidgetModal() {
+            document.getElementById('widgetModal').style.display = 'flex';
+            updateWidgetOptions();
+        }
+
+        function closeWidgetModal() {
+            document.getElementById('widgetModal').style.display = 'none';
+        }
+
+        // Update widget options based on what's already added
+        function updateWidgetOptions() {
+            const widgetOptions = document.querySelectorAll('.widget-option');
+            widgetOptions.forEach(option => {
+                const widgetType = option.getAttribute('onclick').match(/'([^']+)'/)[1];
+                if (addedWidgets.has(widgetType)) {
+                    option.style.opacity = '0.5';
+                    option.style.cursor = 'not-allowed';
+                    option.style.pointerEvents = 'none';
+                } else {
+                    option.style.opacity = '1';
+                    option.style.cursor = 'pointer';
+                    option.style.pointerEvents = 'auto';
+                }
+            });
+        }
+
+        // Add these new variables at the top with other variables
+        let widgetToRemove = null;
+
+        // Update the addWidget function to properly initialize charts
+        function addWidget(type, savedConfig = null) {
+            // Check if widget already exists
+            if (addedWidgets.has(type)) {
+                return;
+            }
+
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+
+            let widgetContent = '';
+            let widgetConfig = {};
+
+            switch(type) {
+                case 'timetable':
+                    widgetContent = `
+                        <div class="widget timetable-fit">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'timetable')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="timetable-container">
+                                <div class="timetable-wrapper">
+                                    <table class="timetable">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-size: 0.7rem;"></th>
+                                                {% for day in days[:5] %}
+                                                <th>{{ day[:3] }}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for time in time_slots[:5] %}
+                                            <tr>
+                                                <td class="day-cell"><strong>{{ time }}</strong></td>
+                                                {% for day in days[:5] %}
+                                                <td>
+                                                    {% set slot = timetable.get((day, time)) %}
+                                                    {% if slot %}
+                                                    <div class="slot subject-{{ slot.subject | lower }}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:2px 0.5px;">
+                                                        <div style="font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:48px;"><strong>{{ slot.subject }}</strong></div>
+                                                        <div style="font-size:0.7rem;">{{ slot.classroom }}</div>
+                                                    </div>
+                                                    {% else %}
+                                                    —
+                                                    {% endif %}
+                                                </td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    widgetConfig = savedConfig || { w: 3, h: 2 };
+                    break;
+
+                case 'lecture':
+                    widgetContent = `
+                        <div class="widget lecture-stack-widget">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'lecture')"><i class="fas fa-times"></i></button>
+                            <div class="lecture-stack-indicator">
+                                <div class="lecture-stack-indicator-dot active" data-index="0"></div>
+                                <div class="lecture-stack-indicator-dot" data-index="1"></div>
+                                <div class="lecture-stack-indicator-dot" data-index="2"></div>
+                            </div>
+                            <!-- Current Lecture Card -->
+                            {% if current_lecture %}
+                            <div class="lecture-stack-card active" data-lecture-type="current" data-start-time="{{ current_lecture.start_time|default('') }}" data-end-time="{{ current_lecture.end_time|default('') }}">
+                                <div class="lecture-stack-header">
+                                    <div class="lecture-stack-status">
+                                        <span class="lecture-stack-dot current"></span>
+                                        <h3 class="lecture-stack-title">{{ current_lecture.subject|default('N/A') }}</h3>
+                                    </div>
+                                    <span class="lecture-stack-tag">Now</span>
+                                </div>
+                                <div class="lecture-stack-progress">
+                                    <div class="lecture-stack-progress-bar">
+                                        <div class="lecture-stack-progress-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="lecture-stack-details">
+                                    <div class="lecture-stack-info">
+                                        <i class="fas fa-door-open"></i>
+                                        <span>{{ current_lecture.classroom|default('N/A') }}</span>
+                                    </div>
+                                    <div class="lecture-stack-time">
+                                        <i class="fas fa-clock"></i>
+                                        <span>{{ current_lecture.start_time|default('') }} - {{ current_lecture.end_time|default('') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Next Lecture Card -->
+                            {% if next_lecture %}
+                            <div class="lecture-stack-card" data-lecture-type="next">
+                                <div class="lecture-stack-header">
+                                    <div class="lecture-stack-status">
+                                        <span class="lecture-stack-dot next"></span>
+                                        <h3 class="lecture-stack-title">{{ next_lecture.subject|default('N/A') }}</h3>
+                                    </div>
+                                    <span class="lecture-stack-tag">Next</span>
+                                </div>
+                                <div class="lecture-stack-details">
+                                    <div class="lecture-stack-info">
+                                        <i class="fas fa-door-open"></i>
+                                        <span>{{ next_lecture.classroom|default('N/A') }}</span>
+                                    </div>
+                                    <div class="lecture-stack-time">
+                                        <i class="fas fa-clock"></i>
+                                        <span>{{ next_lecture.start_time|default('') }} - {{ next_lecture.end_time|default('') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Upcoming Lecture Cards -->
+                            {% for lecture in upcoming_lectures[:1] %}
+                            <div class="lecture-stack-card" data-lecture-type="upcoming">
+                                <div class="lecture-stack-header">
+                                    <div class="lecture-stack-status">
+                                        <span class="lecture-stack-dot upcoming"></span>
+                                        <h3 class="lecture-stack-title">{{ lecture.subject|default('N/A') }}</h3>
+                                    </div>
+                                    <span class="lecture-stack-tag">Later</span>
+                                </div>
+                                <div class="lecture-stack-details">
+                                    <div class="lecture-stack-info">
+                                        <i class="fas fa-door-open"></i>
+                                        <span>{{ lecture.classroom|default('N/A') }}</span>
+                                    </div>
+                                    <div class="lecture-stack-time">
+                                        <i class="fas fa-clock"></i>
+                                        <span>{{ lecture.start_time|default('') }} - {{ lecture.end_time|default('') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <!-- Empty State -->
+                            {% if not current_lecture and not next_lecture %}
+                            <div class="lecture-stack-card active" data-lecture-type="empty">
+                                <div class="lecture-stack-header">
+                                    <div class="lecture-stack-status">
+                                        <span class="lecture-stack-dot upcoming"></span>
+                                        <h3 class="lecture-stack-title">No Lectures Today</h3>
+                                    </div>
+                                </div>
+                                <div class="lecture-stack-details">
+                                    <div class="lecture-stack-info">
+                                    <i class="fas fa-coffee"></i>
+                                        <span>Enjoy your break!</span>
+                                    </div>
+                                </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    `;
+                    widgetConfig = savedConfig || { w: 3, h: 2 };
+                    break;
+
+                case 'attendance':
+                    const attendanceChartId = 'attendanceBarChart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    widgetContent = `
+                        <div class="widget">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'attendance')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="widget-header">
+                                <i class="fas fa-chart-bar"></i>
+                                <h5 class="widget-title">Attendance Overview</h5>
+                            </div>
+                            <div class="widget-content">
+                                <canvas id="${attendanceChartId}"></canvas>
+                            </div>
+                        </div>
+                    `;
+                    widgetConfig = savedConfig || { w: 4, h: 2 };
+                    break;
+
+                case 'monthly_trend':
+                    const monthlyTrendChartId = 'monthlyTrendChart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    widgetContent = `
+                        <div class="widget">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'monthly_trend')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="widget-header">
+                                <i class="fas fa-chart-line"></i>
+                                <h5 class="widget-title">📈 Monthly Attendance Trend</h5>
+                            </div>
+                            <div class="widget-content">
+                                <canvas id="${monthlyTrendChartId}"></canvas>
+                            </div>
+                        </div>
+                    `;
+                    widgetConfig = savedConfig || { w: 6, h: 3 };
+                    break;
+
+                case 'subject_attendance':
+                    const subjectAttendanceChartId = 'subjectAttendanceChart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    widgetContent = `
+                        <div class="widget">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'subject_attendance')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="widget-header">
+                                <i class="fas fa-chart-bar"></i>
+                                <h5 class="widget-title">🏫 Subject-wise Attendance by Classroom</h5>
+                            </div>
+                            <div class="widget-content">
+                                <canvas id="${subjectAttendanceChartId}"></canvas>
+                            </div>
+                        </div>
+                    `;
+                    widgetConfig = savedConfig || { w: 6, h: 3 };
+                    break;
+
+                case 'attendance_heatmap':
+                    const attendanceHeatmapChartId = 'attendanceHeatmapChart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    widgetContent = `
+                        <div class="widget">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'attendance_heatmap')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="widget-header">
+                                <i class="fas fa-fire"></i>
+                                <h5 class="widget-title">🔥 Attendance Heatmap by Subject & Classroom</h5>
+                            </div>
+                            <div class="widget-content">
+                                <canvas id="${attendanceHeatmapChartId}"></canvas>
+                            </div>
+                        </div>
+                    `;
+                    widgetConfig = savedConfig || { w: 6, h: 4 };
+                    break;
+
+                case 'calendar':
+                    widgetContent = `
+                        <div class="widget">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'calendar')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="calendar-widget">
+                                <div class="calendar-header">
+                                    <div class="calendar-title">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div class="calendar-month-year" id="calendarMonthYear"></div>
+                                    <div class="calendar-controls">
+                                        <div class="today-date-display" onclick="goToToday()" title="Today's Date"></div>
+                                        <button class="calendar-btn" onclick="prevMonth()" title="Previous Month">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <button class="calendar-btn" onclick="nextMonth()" title="Next Month">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="calendar-grid" id="calendarGrid">
+                                    <!-- Calendar will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    widgetConfig = savedConfig || { w: 3, h: 4 };
+                    break;
+
+                case 'students':
+                    widgetContent = `
+                        <div class="widget student-list-widget">
+                            <button class="widget-remove-btn" onclick="removeWidget(this, 'students')"><i class="fas fa-times"></i></button>
+                            <div class="widget-header">
+                                <i class="fas fa-user-graduate"></i>
+                                <h5 class="widget-title">Student List</h5>
+                            </div>
+                            <div class="widget-content student-list" style="overflow-y:auto; resize: vertical; min-height:100px; max-height:500px; height:340px;">
+                                <table class="table table-hover align-middle mb-0" style="font-size:0.98rem;">
+                                    <thead class="table-success">
+                                        <tr>
+                                            <th>Roll Number</th>
+                                            <th>Name</th>
+                                            <th>Branch</th>
+                                            <th>Semester</th>
+                                            <th>Section</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="student-list-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    setTimeout(renderStudentListWidget, 0);
+                    break;
+            }
+
+            // Add the widget to the grid with type information
+            const widget = grid.addWidget({
+                content: widgetContent,
+                ...widgetConfig,
+                type: type
+            });
+
+            // Add to tracking set
+            addedWidgets.add(type);
+
+            // Close the modal
+            closeWidgetModal();
+
+            // Initialize charts after a short delay to ensure DOM is ready
+            if (type === 'attendance' || type === 'monthly_trend' || type === 'subject_attendance' || type === 'attendance_heatmap') {
+                setTimeout(() => {
+                    if (typeof initializeCharts === 'function') {
+                        initializeCharts();
+                    }
+                }, 100);
+            } else if (type === 'calendar') {
+                setTimeout(renderCalendar, 100);
+            } else if (type === 'lecture') {
+                setTimeout(() => {
+                    if (typeof initializeLectureWidget === 'function') {
+                        initializeLectureWidget();
+                        // Debug: log lecture data
+                        console.log('current_lecture:', JSON.parse('{{ current_lecture|tojson|safe }}'));
+                        console.log('next_lecture:', JSON.parse('{{ next_lecture|tojson|safe }}'));
+                        console.log('upcoming_lectures:', JSON.parse('{{ upcoming_lectures|tojson|safe }}'));
+                    }
+                }, 100);
+            }
+
+            // Save layout after adding widget
+            saveLayout();
+
+            // Add double-click event listener
+            widget.addEventListener('dblclick', function() {
+                showRemoveConfirmation(widget, type);
+            });
+        }
+
+        // Remove widget function
+        function removeWidget(button, type) {
+            const widget = button.closest('.grid-stack-item');
+            if (widget) {
+                grid.removeWidget(widget);
+                addedWidgets.delete(type);
+                updateWidgetOptions();
+                
+                // Check if no widgets left
+                if (grid.engine.nodes.length === 0) {
+                    const emptyState = document.getElementById('emptyState');
+                    if (emptyState) {
+                        emptyState.style.display = 'block';
+                    }
+                }
+
+                // Save layout after removing widget
+                saveLayout();
+            }
+        }
+
+        // Initialize all charts function
+        function initializeCharts() {
+            // Initialize attendance charts
+            const attendanceCharts = document.querySelectorAll('canvas[id^="attendanceBarChart_"]');
+            attendanceCharts.forEach((canvas, index) => {
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        // Destroy existing chart if it exists
+                        if (canvas.chart) {
+                            canvas.chart.destroy();
+                        }
+                        
+                        // Create new chart
+                        const attendanceStats = {{ attendance_stats | tojson }};
+                        const attendanceData = [attendanceStats.Present, attendanceStats.Absent];
+                        canvas.chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Present', 'Absent'],
+                                datasets: [{
+                                    label: 'Attendance Statistics',
+                                    data: attendanceData,
+                                    backgroundColor: [
+                                        'rgba(75, 192, 192, 0.6)',
+                                        'rgba(255, 99, 132, 0.6)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(255, 99, 132, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            // Initialize monthly trend charts (Line Chart)
+            const monthlyTrendCharts = document.querySelectorAll('canvas[id^="monthlyTrendChart_"]');
+            monthlyTrendCharts.forEach((canvas, index) => {
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        // Destroy existing chart if it exists
+                        if (canvas.chart) {
+                            canvas.chart.destroy();
+                        }
+                        
+                        // Generate last 30 days dates
+                        const dates = [];
+                        const attendanceData = [];
+                        for (let i = 29; i >= 0; i--) {
+                            const date = new Date();
+                            date.setDate(date.getDate() - i);
+                            dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                            // Generate random attendance data between 60-90
+                            attendanceData.push(Math.floor(Math.random() * 31) + 60);
+                        }
+                        
+                        // Create new chart
+                        canvas.chart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: dates,
+                                datasets: [{
+                                    label: 'Present Students',
+                                    data: attendanceData,
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                                    pointBorderColor: '#fff',
+                                    pointBorderWidth: 2,
+                                    pointRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top'
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        title: {
+                                            display: false,
+                                            text: 'Number of Students Present'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: false,
+                                            text: 'Date'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            // Initialize subject attendance charts (Grouped Bar Chart)
+            const subjectAttendanceCharts = document.querySelectorAll('canvas[id^="subjectAttendanceChart_"]');
+            subjectAttendanceCharts.forEach((canvas, index) => {
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        // Destroy existing chart if it exists
+                        if (canvas.chart) {
+                            canvas.chart.destroy();
+                        }
+                        
+                        // Create new chart
+                        canvas.chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Python', 'DBMS', 'C Programming', 'SQL', 'Mathematics'],
+                                datasets: [
+                                    {
+                                        label: 'Classroom A-101',
+                                        data: [25, 30, 22, 28, 35],
+                                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                        borderColor: 'rgba(255, 99, 132, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Classroom B-202',
+                                        data: [28, 25, 30, 22, 28],
+                                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Classroom C-303',
+                                        data: [22, 28, 25, 30, 22],
+                                        backgroundColor: 'rgba(255, 206, 86, 0.8)',
+                                        borderColor: 'rgba(255, 206, 86, 1)',
+                                        borderWidth: 1
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top'
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: false,
+                                            text: 'Number of Students Present'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: false,
+                                            text: 'Subjects'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            // Initialize attendance heatmap charts (Horizontal Stacked Bar Chart)
+            const attendanceHeatmapCharts = document.querySelectorAll('canvas[id^="attendanceHeatmapChart_"]');
+            attendanceHeatmapCharts.forEach((canvas, index) => {
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        // Destroy existing chart if it exists
+                        if (canvas.chart) {
+                            canvas.chart.destroy();
+                        }
+                        
+                        // Create new chart
+                        canvas.chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Python', 'DBMS', 'C Programming', 'SQL', 'Mathematics'],
+                                datasets: [
+                                    {
+                                        label: 'Classroom A-101',
+                                        data: [25, 30, 22, 28, 35],
+                                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                        borderColor: 'rgba(255, 99, 132, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Classroom B-202',
+                                        data: [28, 25, 30, 22, 28],
+                                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Classroom C-303',
+                                        data: [22, 28, 25, 30, 22],
+                                        backgroundColor: 'rgba(255, 206, 86, 0.8)',
+                                        borderColor: 'rgba(255, 206, 86, 1)',
+                                        borderWidth: 1
+                                    }
+                                ]
+                            },
+                            options: {
+                                indexAxis: 'y', // This makes it horizontal
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top'
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        beginAtZero: true,
+                                        title: {
+                                            display: false,
+                                            text: 'Number of Students Present'
+                                        }
+                                    },
+                                    y: {
+                                        stacked: true,
+                                        title: {
+                                            display: false,
+                                            text: 'Subjects'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        
+
+            // Theme Toggle (match login page logic)
+            const themeToggle = document.querySelector('.theme-switch-checkbox');
+            const body = document.body;
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeToggle.checked = false;
+            }
+            // Toggle event
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    body.classList.remove('light');
+                    body.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.classList.remove('dark');
+                    body.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+        // Calendar Functions
+        let currentDate = new Date();
+        let selectedDate = null;
+        let events = JSON.parse(localStorage.getItem('calendarEvents') || '{}');
+
+        // Helper function to get a consistent date key (YYYY-MM-DD)
+        function getDateKey(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        let eventCategories = {
+            'meeting': { name: 'Meeting', color: '#e3f2fd', icon: 'fas fa-users' },
+            'holiday': { name: 'Holiday', color: '#ffe0e0', icon: 'fas fa-umbrella-beach' },
+            'class': { name: 'Class', color: '#e8f5e9', icon: 'fas fa-chalkboard-teacher' },
+            'personal': { name: 'Personal', color: '#fff3e0', icon: 'fas fa-user' },
+            'exam': { name: 'Exam', color: '#fce4ec', icon: 'fas fa-file-alt' },
+            'deadline': { name: 'Deadline', color: '#f3e5f5', icon: 'fas fa-clock' },
+            'workshop': { name: 'Workshop', color: '#e0f7fa', icon: 'fas fa-tools' }
+        };
+    
+
+        function renderCalendar() {
+            // Reload events from localStorage to ensure we have the latest data
+            events = JSON.parse(localStorage.getItem('calendarEvents') || '{}');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update month and year display
+            const monthYearElement = document.getElementById('calendarMonthYear');
+            if (monthYearElement) {
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                monthYearElement.textContent = `${monthNames[month]} ${year}`;
+            }
+
+            // Update today's date display
+            const todayDateDisplay = document.querySelector('.today-date-display');
+            if (todayDateDisplay) {
+                todayDateDisplay.textContent = new Date().getDate();
+            }
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            if (!calendarGrid) return;
+
+            // Clear existing calendar
+            calendarGrid.innerHTML = '';
+
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-days';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+
+            // Add empty cells for days before first day of month
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-date';
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dateElement = document.createElement('div');
+                dateElement.className = 'calendar-date';
+                dateElement.textContent = day;
+
+                const currentDateKey = getDateKey(new Date(year, month, day));
+                const dayEvents = events[currentDateKey] || [];
+
+                // Check if it's today
+                const today = new Date();
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dateElement.classList.add('today');
+                }
+
+                // Add event indicators
+                if (dayEvents.length > 0) {
+                    dateElement.classList.add('has-events');
+                    
+                    // Add a class for the type of the first event for specific styling
+                    const firstEventType = dayEvents[0].type;
+                    if (firstEventType && eventCategories[firstEventType]) {
+                        dateElement.classList.add(`event-type-${firstEventType}`);
+                    }
+
+                    // Add event preview on hover
+                    const eventPreview = document.createElement('div');
+                    eventPreview.className = 'event-preview';
+                    eventPreview.innerHTML = dayEvents.map(event => 
+                        `<div class="event-preview-item event-${event.type}">
+                            <i class="${eventCategories[event.type]?.icon || 'fas fa-calendar'}"></i>
+                            <span>${event.title}</span>
+                        </div>`
+                    ).join('');
+                    dateElement.appendChild(eventPreview);
+                }
+
+                // Add click events
+                dateElement.onclick = () => openDateView(new Date(year, month, day));
+                dateElement.ondblclick = () => openQuickAdd(new Date(year, month, day));
+
+                calendarGrid.appendChild(dateElement);
+            }
+
+            // Add empty cells to complete the grid
+            const lastDayOfMonth = lastDay.getDay();
+            const remainingCells = (7 - (lastDayOfMonth + 1)) % 7;
+            for (let i = 0; i < remainingCells; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-date';
+                calendarGrid.appendChild(emptyCell);
+            }
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function openQuickAdd(date) {
+            selectedDate = date;
+            document.getElementById('popupOverlay').classList.add('active');
+            document.getElementById('quickAddPopup').classList.add('active');
+            
+            // Update form with current date
+            const dateInput = document.getElementById('eventDate');
+            if (dateInput) {
+                dateInput.value = getDateKey(date);
+            }
+            
+            console.log('Opening quick add for date:', date);
+            console.log('Selected date:', selectedDate);
+        }
+
+        function openDateView(date) {
+            selectedDate = date;
+            const dateKey = getDateKey(date);
+            
+            // Reload events from localStorage to get the latest data
+            const currentEvents = JSON.parse(localStorage.getItem('calendarEvents') || '{}');
+            const dayEvents = currentEvents[dateKey] || [];
+            
+            console.log('Opening date view for:', dateKey);
+            console.log('All events from localStorage:', currentEvents);
+            console.log('Events found for this date:', dayEvents);
+            
+            // Create and show date view modal
+            const modal = document.createElement('div');
+            modal.className = 'date-view-modal';
+            modal.innerHTML = `
+                <div class="date-view-content">
+                    <div class="date-view-header">
+                        <h3>${date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
+                        <button class="close-date-view" onclick="closeDateView()">×</button>
+                    </div>
+                    <div class="date-view-events">
+                        ${dayEvents.length === 0 ? '<p class="no-events">No events scheduled</p>' : 
+                          dayEvents.map((event, index) => `
+                            <div class="date-event-item event-${event.type}">
+                                <div class="event-header">
+                                    <i class="${eventCategories[event.type]?.icon || 'fas fa-calendar'}"></i>
+                                    <span class="event-title">${event.title}</span>
+                                    <div class="event-actions">
+                                        <button onclick="editEvent('${dateKey}', ${index})" class="edit-event-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="deleteEvent('${dateKey}', ${index})" class="delete-event-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                ${event.description ? `<p class="event-description">${event.description}</p>` : ''}
+                                ${event.time ? `<p class="event-time"><i class="fas fa-clock"></i> ${event.time}</p>` : ''}
+                            </div>
+                          `).join('')}
+                    </div>
+                    <div class="date-view-actions">
+                        <button onclick="addEventFromDateView()" class="add-event-btn">
+                            <i class="fas fa-plus"></i> Add Event
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        // Add new function to handle Add Event from date view
+        function addEventFromDateView() {
+            // Close the date view modal first
+            closeDateView();
+            
+            // Open the quick add popup after a short delay
+            setTimeout(() => {
+                openQuickAdd(selectedDate);
+            }, 100);
+        }
+
+        function closeDateView() {
+            const modal = document.querySelector('.date-view-modal');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+
+        function closeQuickAdd() {
+            document.getElementById('popupOverlay').classList.remove('active');
+            document.getElementById('quickAddPopup').classList.remove('active');
+            
+            // Reset form completely
+            const form = document.querySelector('.quick-add-form');
+            if (form) {
+                form.reset();
+            }
+            
+            selectedDate = null;
+        }
+
+        function saveEvent(event) {
+            event.preventDefault();
+            const form = event.target;
+            const title = form.querySelector('input[placeholder="Event Title"]').value;
+            const type = form.querySelector('select').value;
+            const description = form.querySelector('textarea')?.value || '';
+            const time = form.querySelector('input[type="time"]')?.value || '';
+
+            if (!selectedDate || !title || !type) return;
+
+            const eventData = {
+                title,
+                type,
+                description,
+                time,
+                created: new Date().toISOString()
+            };
+
+            // Save single event
+            const dateKey = getDateKey(selectedDate);
+            if (!events[dateKey]) events[dateKey] = [];
+            events[dateKey].push(eventData);
+
+            // Save to localStorage
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+            
+            console.log('Event saved:', eventData);
+            console.log('Date key:', dateKey);
+            console.log('Updated events object:', events);
+            console.log('Events for this date after saving:', events[dateKey]);
+
+            // Re-render calendar
+            renderCalendar();
+
+            // Close quick add popup
+            closeQuickAdd();
+            
+            // Refresh date view if it's open
+            setTimeout(() => {
+                const existingModal = document.querySelector('.date-view-modal');
+                if (existingModal && selectedDate) {
+                    closeDateView();
+                    setTimeout(() => openDateView(selectedDate), 100);
+                }
+            }, 200);
+        }
+
+        function editEvent(dateKey, eventIndex) {
+            // First, close the date view modal
+            closeDateView();
+
+            // Use a timeout to ensure the close animation completes before opening the new popup
+            setTimeout(() => {
+                const event = events[dateKey]?.[eventIndex];
+                if (!event) {
+                    console.error("Event not found for editing:", dateKey, eventIndex);
+                    return;
+                }
+                selectedDate = new Date(dateKey.replace(/-/g, '/')); // More reliable parsing
+
+                // Populate form with event data
+                const form = document.querySelector('.quick-add-form');
+                form.querySelector('input[placeholder="Event Title"]').value = event.title;
+                form.querySelector('select').value = event.type;
+                if (form.querySelector('textarea')) {
+                    form.querySelector('textarea').value = event.description || '';
+                }
+                if (form.querySelector('input[type="time"]')) {
+                    form.querySelector('input[type="time"]').value = event.time || '';
+                }
+
+                // Show form for editing
+                document.getElementById('popupOverlay').classList.add('active');
+                document.getElementById('quickAddPopup').classList.add('active');
+
+                // Update form submission to edit instead of create
+                form.onsubmit = (e) => updateEvent(e, dateKey, eventIndex);
+            }, 300); // Match animation duration from closeDateView
+        }
+
+        function updateEvent(event, dateKey, eventIndex) {
+            event.preventDefault();
+            const form = event.target;
+            const title = form.querySelector('input[placeholder="Event Title"]').value;
+            const type = form.querySelector('select').value;
+            const description = form.querySelector('textarea')?.value || '';
+            const time = form.querySelector('input[type="time"]')?.value || '';
+
+            events[dateKey][eventIndex] = {
+                title,
+                type,
+                description,
+                time,
+                updated: new Date().toISOString()
+            };
+
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+            renderCalendar();
+            closeQuickAdd();
+            
+            // Reset form submission
+            form.onsubmit = saveEvent;
+            
+            // Re-open date view to see the updated event
+            setTimeout(() => {
+                if (selectedDate) {
+                    openDateView(selectedDate);
+                }
+            }, 200);
+        }
+
+        function deleteEvent(dateKey, eventIndex) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                events[dateKey].splice(eventIndex, 1);
+                if (events[dateKey].length === 0) {
+                    delete events[dateKey];
+                }
+                localStorage.setItem('calendarEvents', JSON.stringify(events));
+                renderCalendar();
+                closeDateView();
+                
+                // Re-open date view to see the updated list
+                setTimeout(() => {
+                    if (selectedDate) {
+                        openDateView(selectedDate);
+                    }
+                }, 200);
+            }
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+
+        // Add these new functions
+        function showRemoveConfirmation(widget, type) {
+            widgetToRemove = { element: widget, type: type };
+            document.getElementById('confirmationOverlay').classList.add('active');
+            document.getElementById('confirmationPopup').classList.add('active');
+        }
+
+        function confirmRemove() {
+            if (widgetToRemove) {
+                grid.removeWidget(widgetToRemove.element);
+                addedWidgets.delete(widgetToRemove.type);
+                updateWidgetOptions();
+                
+                // Check if no widgets left
+                if (grid.engine.nodes.length === 0) {
+                    const emptyState = document.getElementById('emptyState');
+                    if (emptyState) {
+                        emptyState.style.display = 'block';
+                    }
+                }
+
+                // Save layout after removing widget
+                saveLayout();
+            }
+            cancelRemove();
+        }
+
+        function cancelRemove() {
+            widgetToRemove = null;
+            document.getElementById('confirmationOverlay').classList.remove('active');
+            document.getElementById('confirmationPopup').classList.remove('active');
+        }
+
+        // Add event listener for grid changes
+        grid.on('change', function() {
+            // Save layout when grid changes
+            saveLayout();
+            
+            // Reinitialize charts when grid layout changes
+            setTimeout(() => {
+                if (typeof initializeCharts === 'function') {
+                    initializeCharts();
+                }
+            }, 100);
+        });
+
+        // Add event listener for widget removal
+        grid.on('removed', function() {
+            // Save layout when widget is removed
+            saveLayout();
+            
+            // Check if no widgets left
+            if (grid.engine.nodes.length === 0) {
+                const emptyState = document.getElementById('emptyState');
+                if (emptyState) {
+                    emptyState.style.display = 'block';
+                }
+            }
+        });
+
+        // Lecture Stack Widget Animation
+        function initializeLectureStackWidget() {
+            const stackWidget = document.querySelector('.lecture-stack-widget');
+            if (!stackWidget) return;
+
+            const cards = stackWidget.querySelectorAll('.lecture-stack-card');
+            const indicators = stackWidget.querySelectorAll('.lecture-stack-indicator-dot');
+            
+            if (cards.length <= 1) return; // No need to animate if only one card
+
+            let currentIndex = 0;
+            let animationInterval = null;
+            let cardInterval = null;
+
+            function showCard(index) {
+                // Remove active class from all cards and indicators
+                cards.forEach(card => {
+                    card.classList.remove('active');
+                    card.classList.remove('slide-left', 'slide-right');
+                });
+                indicators.forEach(indicator => {
+                    indicator.classList.remove('active');
+                });
+                // Add active class to current card and indicator
+                if (cards[index]) {
+                    cards[index].classList.add('active');
+                }
+                if (indicators[index]) {
+                    indicators[index].classList.add('active');
+                }
+                // Update progress bar for current lecture
+                updateProgressBar(cards[index]);
+            }
+
+            function nextCard() {
+                currentIndex = (currentIndex + 1) % cards.length;
+                showCard(currentIndex);
+            }
+
+            function updateProgressBar(card) {
+                if (!card || card.dataset.lectureType !== 'current') return;
+
+                const startTime = card.dataset.startTime;
+                const endTime = card.dataset.endTime;
+                const progressBar = card.querySelector('.lecture-stack-progress-fill');
+                
+                if (!startTime || !endTime || !progressBar) return;
+
+                function updateProgress() {
+                    const now = new Date();
+                    const start = new Date(now.toDateString() + ' ' + startTime);
+                    const end = new Date(now.toDateString() + ' ' + endTime);
+
+                    const totalDuration = end - start;
+                    const elapsedTime = now - start;
+
+                    let progress = (elapsedTime / totalDuration) * 100;
+                    progress = Math.max(0, Math.min(100, progress));
+
+                    progressBar.style.width = progress + '%';
+
+                    // Stop updating if lecture is over
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                    }
+                }
+
+                // Clear any existing interval
+                if (animationInterval) {
+                    clearInterval(animationInterval);
+                }
+
+                // Update immediately and then every 30 seconds
+                updateProgress();
+                progressInterval = setInterval(updateProgress, 30000);
+            }
+
+            // Start the animation
+            function startAnimation() {
+                // Show first card
+                showCard(0);
+                // Clear any previous interval to avoid multiple intervals
+                if (cardInterval) clearInterval(cardInterval);
+                // Start alternating every 5 seconds
+                cardInterval = setInterval(nextCard, 5000);
+            }
+
+            // Initialize the widget
+            startAnimation();
+
+            // Add click handlers for indicators
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentIndex = index;
+                    showCard(currentIndex);
+                });
+            });
+        }
+
+        // Update the existing initializeLectureWidget function
+        function initializeLectureWidget() {
+            // Check if it's the new stack widget
+            const stackWidget = document.querySelector('.lecture-stack-widget');
+            if (stackWidget) {
+                initializeLectureStackWidget();
+                return;
+            }
+
+            // Fallback to old lecture widget logic
+            const lectureWidget = document.querySelector('.lecture-info.current');
+            if (!lectureWidget) return;
+
+            const startTimeStr = lectureWidget.dataset.startTime;
+            const endTimeStr = lectureWidget.dataset.endTime;
+            const progressBar = lectureWidget.querySelector('.lecture-progress-bar');
+            const timeMarker = document.getElementById('current-time-marker');
+
+            function updateProgress() {
+                const now = new Date();
+                const start = new Date(now.toDateString() + ' ' + startTimeStr);
+                const end = new Date(now.toDateString() + ' ' + endTimeStr);
+
+                const totalDuration = end - start;
+                const elapsedTime = now - start;
+
+                let progress = (elapsedTime / totalDuration) * 100;
+                progress = Math.max(0, Math.min(100, progress));
+
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+                
+                if (timeMarker) {
+                    timeMarker.style.left = progress + '%';
+                    timeMarker.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }
+
+            const progressInterval = setInterval(updateProgress, 1000 * 30);
+            updateProgress();
+        }
+
+        // Load layout when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLayout();
+        });
+
+        function renderStudentListWidget() {
+            const studentsList = {{ students_list | tojson }};
+            const tbody = document.getElementById('student-list-table-body');
+            if (tbody) {
+                tbody.innerHTML = studentsList.map(student => `
+                    <tr>
+                        <td>${student.roll_no || ''}</td>
+                        <td>${student.name || ''}</td>
+                        <td>${student.branch || ''}</td>
+                        <td>${student.semester || ''}</td>
+                        <td>${student.section || ''}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>

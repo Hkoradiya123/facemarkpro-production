@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/gridstack@7.2.3/dist/gridstack.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #4a90e2;
+            --card-bg: #f5f6fa;
+            --text-color: #333333;
+            --sidebar-bg: #f8f9fa;
+            --input-bg: #fff;
+            --input-border: #e0e0e0;
+            --btn-bg: #1976d2;
+            --btn-bg-upload: #00b894;
+            --btn-text: #fff;
+            --btn-hover: #1251a3;
+            --btn-upload-hover: #009e74;
+            --alert-bg: rgba(79,172,254,0.09);
+            --alert-text: #1976d2;
+            --success-bg: #e8f5e9;
+            --success-border: #4caf50;
+            --error-bg: #ffebee;
+            --error-border: #f44336;
+            --warning-bg: #fff3e0;
+            --warning-border: #ff9800;
+        }
+        body.dark {
+            --card-bg: #23272f;
+            --text-color: #e0e0e0;
+            --sidebar-bg: #181c24;
+            --input-bg: #23272f;
+            --input-border: #333;
+            --btn-bg: #1565c0;
+            --btn-bg-upload: #00b894;
+            --btn-text: #fff;
+            --btn-hover: #0d47a1;
+            --btn-upload-hover: #009e74;
+            --alert-bg: #223a5f;
+            --alert-text: #aeefff;
+            --success-bg: #1b5e20;
+            --success-border: #4caf50;
+            --error-bg: #b71c1c;
+            --error-border: #f44336;
+            --warning-bg: #e65100;
+            --warning-border: #ff9800;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        /* Modern Sidebar Styles (copied from face_registrations_summary.html) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            padding: 24px 20px;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08), 0 0 40px rgba(0, 0, 0, 0.04);
+            border-right: 1px solid rgba(0, 0, 0, 0.06);
+            z-index: 1200;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+        body.dark .sidebar {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.2);
+            border-right-color: rgba(255, 255, 255, 0.1);
+        }
+        .profile-section {
+            text-align: center;
+            padding: 24px 0 28px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+        body.dark .profile-section {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+        .profile-photo {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+        }
+        .profile-photo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+        }
+        body.dark .profile-photo {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .profile-section h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+        .nav-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+        }
+        .camera-placeholder {
+            color: #666;
+            text-align: center;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        body.dark .camera-placeholder {
+            color: #999;
+        }
+        .nav-link:hover i {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+            transform: translateX(2px);
+        }
+        .nav-link.active::before {
+            transform: scaleY(1);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .nav-link.active i {
+            color: #ffffff !important;
+        }
+        .sidebar-footer {
+            position: absolute;
+            bottom: 24px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        body.dark .sidebar-footer {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-link.text-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff !important;
+        }
+        .nav-link.text-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+        .nav-link.text-danger i {
+            color: #ffffff !important;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 260px;
+                padding: 20px 16px;
+            }
+            .nav-link {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+            .profile-photo {
+                width: 64px;
+                height: 64px;
+            }
+        }
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 16px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        body.dark .main-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+
+        .attendance-container {
+            flex: 1;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 16px;
+            height: auto;
+        }
+
+        .attendance-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .attendance-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
+            pointer-events: none;
+        }
+
+        body.dark .attendance-header {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .attendance-content {
+            display: grid;
+            grid-template-columns: 35% 65%;
+            gap: 16px;
+            height: auto;
+        }
+
+        .content-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+        }
+
+        body.dark .content-panel {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .panel-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 16px 20px 0 20px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-header i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .panel-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .panel-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        body.dark .panel-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Left Panel - Controls */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .control-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.4s ease-in-out;
+        }
+
+        body.dark .control-card {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 3px solid rgba(74, 144, 226, 0.8);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border-color: rgba(74, 144, 226, 0.9);
+        }
+
+        body.dark .form-select:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.4);
+        }
+
+        body.dark .form-select:hover {
+            border-color: rgba(74, 144, 226, 1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        body.dark .form-select option {
+            background: #1e2530;
+            color: #ffffff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.4s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #00a085 0%, #008a74 100%);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+/* Right Panel - Live Session Area */
+        .right-panel {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+        }
+
+        body.dark .right-panel {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .camera-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .camera-section.active {
+            opacity: 1;
+        }
+
+        .camera-container {
+            /* width: auto; */
+            max-width: 280%;
+            /* height: auto; */
+            max-height: 260%;
+            position: relative;
+            aspect-ratio: 3/4;
+            background: transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 300px;
+            padding: 20px;
+        }
+
+        .video-element {
+            width: 120%;
+            height: 150%;
+            object-fit: cover;
+            display: block;
+            border-radius: 8px;
+            background: transparent;
+            margin-top: 80px;
+        }
+
+        .end-session-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+        }
+
+        .end-session-btn:hover {
+            background: rgba(220, 38, 38, 0.9);
+            transform: scale(1.05);
+        }
+
+/* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(16, 185, 129, 0.95);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transform: translateX(400px);
+            transition: transform 0.4s ease-in-out;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast::before {
+            content: "✅";
+            margin-right: 8px;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-color);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Center Panel - Video */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-container {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .video-element {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .progress-section {
+            margin-top: 16px;
+        }
+
+        .progress-wrapper {
+            background: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 20px;
+            margin-bottom: 8px;
+        }
+
+        body.dark .progress-wrapper {
+            background: #374151;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color) 0%, #10b981 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        /* Right Panel - Status & Lists */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px;
+            transition: all 0.4s ease-in-out;
+        }
+
+        body.dark .status-card {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+            border-left: 4px solid;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .status-info {
+            background: rgba(74, 144, 226, 0.1);
+            border-left-color: var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: #10b981;
+            color: var(--text-color);
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: #ef4444;
+            color: var(--text-color);
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Baloo Bhai 2', cursive;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.95;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .status-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.inactive {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+        }
+
+        .students-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s ease-in-out;
+        }
+
+        body.dark .students-section {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .students-header {
+            padding: 16px 20px 0 20px;
+            color: var(--primary-color);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .students-list {
+            flex: 1;
+            padding: 16px 20px;
+            overflow-y: auto;
+            list-style: none;
+            margin: 0;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 8px;
+        }
+
+        .student-check {
+            color: #10b981;
+            font-size: 1.1rem;
+        }
+
+        .student-name {
+            flex: 1;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .upload-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px;
+            transition: all 0.4s ease-in-out;
+        }
+
+        body.dark .upload-section {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .upload-description {
+            color: var(--text-color);
+            margin-bottom: 12px;
+            opacity: 0.8;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--btn-bg-upload) 0%, #00a085 100%);
+            color: white;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #00a085 0%, #008a74 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .attendance-content {
+                grid-template-columns: 38% 62%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 12px;
+            }
+
+            .attendance-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                gap: 12px;
+                height: auto;
+            }
+
+            .attendance-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .content-panel {
+                padding: 12px;
+            }
+
+            .panel-content {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 8px;
+            }
+
+            .attendance-header {
+                padding: 16px;
+            }
+
+            .attendance-header h1 {
+                font-size: 1.1rem;
+            }
+
+            .attendance-header p {
+                font-size: 0.8rem;
+            }
+
+            .content-panel {
+                padding: 8px;
+            }
+
+            .panel-content {
+                padding: 8px;
+            }
+
+            .panel-header {
+                font-size: 1rem;
+                padding: 12px 8px 0 8px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.85rem;
+            }
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .widget-header i {
+            font-size: 1.7rem;
+            color: var(--primary-color);
+        }
+
+        .widget-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-info {
+            width: 100%;
+            border-radius: 10px;
+            background: var(--alert-bg);
+            color: var(--alert-text);
+            border: none;
+            font-size: 1rem;
+            margin-bottom: 28px;
+            text-align: center;
+            padding: 12px 10px;
+        }
+
+        .select-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .select-class {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .select-class:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .action-btn {
+            background-color: var(--btn-bg-upload);
+            color: var(--btn-text);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .action-btn:hover {
+            background-color: var(--btn-upload-hover);
+        }
+
+        .action-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #startLiveBtn, #stopLiveBtn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        #startLiveBtn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        #stopLiveBtn {
+            background-color: #dc3545;
+        }
+
+        #stopLiveBtn:hover {
+            background-color: #c82333;
+        }
+
+        #loadingSpinner {
+            color: var(--primary-color);
+            font-style: italic;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .status-message {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid;
+        }
+
+        .status-success {
+            background: var(--success-bg) !important;
+            border-left-color: var(--success-border) !important;
+            color: var(--text-color);
+        }
+
+        .status-error {
+            background: var(--error-bg) !important;
+            border-left-color: var(--error-border) !important;
+            color: var(--text-color);
+        }
+
+        .status-warning {
+            background: var(--warning-bg) !important;
+            border-left-color: var(--warning-border) !important;
+            color: var(--text-color);
+        }
+
+        .video-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 700px) {
+            .main-content {
+                padding: 10px;
+            }
+            .attendance-widget {
+                padding: 20px 15px;
+                max-width: 100%;
+                padding: 15px;
+                margin-left: 0;
+            }
+        }
+
+        /* Dark theme support */
+        body.dark #recognizedList li {
+            background-color: #1e3a5f !important;
+            color: #e3f2fd !important;
+        }
+
+    </style>
+</head>
+<body class="light">
+        <!-- Sidebar (copied from face_registrations_summary.html for perfect match) -->
+        <div class="sidebar">
+                <div class="profile-section">
+                        <a href="{{ url_for('faculty.profile') }}" style="display:inline-block;">
+                            <img src="{{ url_for('static', filename='img/faculty.jpg') }}" alt="Profile Photo" class="profile-photo" style="cursor:pointer;">
+                        </a>
+                        <h5>{{ faculty }}</h5>
+                </div>
+                <div class="nav-links">
+                        <ul class="nav-links">
+                                <li style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <a href="{{ url_for('faculty.dashboard') }}" class="nav-link{% if request.path == url_for('faculty.dashboard') %} active{% endif %}"><i class="fas fa-home"></i> Dashboard</a>
+                                    {% if request.path == url_for('faculty.dashboard') %}
+                                    <div class="icon-plus-btn" onclick="openWidgetModal()" tabindex="0" aria-label="Add Widget">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" style="display:inline-block; vertical-align:middle;">
+                                            <path d="M12 5v14m-7-7h14" stroke="#1976d2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                        </svg>
+                                    </div>
+                                    {% endif %}
+                                </li>
+                                <li><a href="{{ url_for('attendance.attendance') }}" class="nav-link{% if request.path == url_for('attendance.attendance') %} active{% endif %}"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                                <li><a href="{{ url_for('attendance.manual_attendance') }}" class="nav-link{% if request.path == url_for('attendance.manual_attendance') %} active{% endif %}"><i class="fas fa-user-check"></i> Manual Attendance</a></li>
+                                <li><a href="{{ url_for('students.register_student_face') }}" class="nav-link{% if request.path == url_for('students.register_student_face') %} active{% endif %}"><i class="fas fa-user-plus"></i> Register Face</a></li>
+                                <li><a href="{{ url_for('students.face_registrations_summary') }}" class="nav-link{% if request.path == url_for('students.face_registrations_summary') %} active{% endif %}"><i class="fas fa-list"></i> Face Summary</a></li>
+                        </ul>
+                </div>
+                <div class="sidebar-footer">
+                        <a href="/logout" class="nav-link text-danger">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                        </a>
+                        <label class="switch">
+                            <input type="checkbox" class="theme-switch-checkbox">
+                            <span class="slider"></span>
+                        </label>            
+                </div>
+        </div>
+
+    <!-- Mobile Header -->
+    <div class="d-md-none" style="position:sticky; top:0; z-index:1100; background: var(--card-bg); padding: 10px 12px; border-bottom:1px solid var(--input-border); display:flex; align-items:center; gap:8px;">
+        <button id="sidebarToggle" class="btn btn-outline-primary btn-sm" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+        <div style="font-weight:700;">Attendance</div>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="attendance-container">
+            <!-- Header Section -->
+            <div class="attendance-header">
+                <div class="header-content">
+                    <div class="header-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="header-text">
+                        <h1>Live Attendance</h1>
+                        <span class="header-subtitle">AI-Powered Recognition</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Section - 2 Panel Layout -->
+            <div class="attendance-content">
+                <!-- Left Panel - Controls & Status -->
+                <div class="content-panel left-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-cog"></i>
+                        Controls & Status
+                    </div>
+                    <div class="panel-content">
+                        <!-- Class Selection -->
+                        <div class="control-card">
+                            <div class="form-group">
+                                <label for="classSelect" class="form-label">Select Class:</label>
+                                <select id="classSelect" name="class" class="form-select" required aria-label="Select class">
+                                    <option value="" disabled selected>Select a class</option>
+                                    {% for lec in lectures_today %}
+                                        <option value="{{ lec.id }}">{{ lec.subject }} ({{ lec.branch }}-{{ lec.semester }}{{ lec.section }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Present Students Section -->
+                        <div class="students-section" id="studentsSection" style="display:none;">
+                            <div class="students-header">
+                                <i class="fas fa-users"></i>
+                                Present Students
+                            </div>
+                            <ul class="students-list" id="recognizedList"></ul>
+                        </div>
+
+                        <!-- Save Attendance Button (shown when live is active) -->
+                        <div class="control-card" id="saveSection" style="display:none;">
+                            <button type="button" class="btn btn-success" id="saveAttendanceBtn">
+                                <i class="fas fa-save"></i>
+                                Save Attendance
+                            </button>
+                        </div>
+
+                        <!-- Upload Alternative (shown when not in live mode) -->
+                        <div class="upload-section" id="uploadSection">
+                            <button id="startLiveBtn" type="button" class="btn btn-primary" style="margin-bottom: 12px;">
+                                <i class="fas fa-play"></i>
+                                Start Live
+                            </button>
+                            <div class="upload-description">
+                                Prefer to upload a video file instead of live attendance?
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="uploadVideoBtn">
+                                <i class="fas fa-upload"></i>
+                                Upload Video
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Live Session -->
+                <div class="content-panel right-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-video"></i>
+                        Live Session
+                    </div>
+                    <div class="panel-content">
+                        <!-- Status Messages -->
+                        <div class="status-card" id="statusCard">
+                            <div id="statusContainer"></div>
+                        </div>
+
+                        <!-- Camera Section (shown when live is active) -->
+                        <div class="camera-section" id="cameraSection">
+                            <div class="camera-container">
+                                <video id="videoElement" class="video-element" autoplay muted></video>
+                            </div>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="loading-spinner" style="display:none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading model...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    <!-- Sidebar Overlay for mobile -->
+    <div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:1150;"></div>
+
+    <script>
+        // Sidebar Toggle (mobile)
+        (function(){
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            function openSidebar(){
+                if (!sidebar) return;
+                sidebar.classList.add('open');
+                if (overlay) overlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSidebar(){
+                if (!sidebar) return;
+                sidebar.classList.remove('open');
+                if (overlay) overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            if (toggleBtn){ toggleBtn.addEventListener('click', openSidebar); }
+            if (overlay){ overlay.addEventListener('click', closeSidebar); }
+            document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeSidebar(); });
+            navLinks.forEach(a => a.addEventListener('click', closeSidebar));
+        })();
+        // Global variables for attendance management
+        let currentSessionId = null;
+        let pollingInterval = null;
+        let videoStream = null;
+        let videoElement = null;
+        let recognizedStudents = new Set();
+        let isSessionActive = false;
+        let frameProcessingInterval = null;
+        let processingFrames = false;
+        let sessionStartTime = null;
+
+        // Utility functions
+        function showStatus(message, type = 'info') {
+            const container = document.getElementById('statusContainer');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.textContent = message;
+            
+            // Remove existing status messages
+            container.innerHTML = '';
+            container.appendChild(statusDiv);
+            
+            // Auto-remove after 5 seconds for info messages
+            if (type === 'info') {
+                setTimeout(() => {
+                    if (statusDiv.parentNode) {
+                        statusDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        function updateProgress(percentage, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            if (progressFill) {
+                progressFill.style.width = `${percentage}%`;
+            }
+            if (progressText) {
+                progressText.textContent = text;
+            }
+        }
+
+        function getSelectedClassId() {
+            const select = document.getElementById('classSelect');
+            return select.value;
+        }
+
+        function validateClassSelection() {
+            const classId = getSelectedClassId();
+            if (!classId) {
+                showStatus('Please select a class first', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        async function checkModelStatus() {
+            showStatus('Checking face recognition model status...', 'info');
+            const response = await fetch('/attendance/model_status');
+            const data = await response.json();
+            if (data.ready) {
+                showStatus('Model loaded. You can start live attendance.', 'success');
+                return true;
+            } else {
+                showStatus('Model not ready: ' + (data.error || ''), 'error');
+                return false;
+            }
+        }
+
+        // Live Attendance Functions
+        async function onStartLiveAttendance() {
+            if (!validateClassSelection()) return;
+
+            try {
+                // 1. Check model status first
+                const modelReady = await checkModelStatus();
+                if (!modelReady) return;
+
+                // 2. Proceed with starting session and camera as before
+                // Show loading state
+                const startLiveBtn = document.getElementById('startLiveBtn');
+                document.getElementById('loadingSpinner').style.display = 'block';
+                if (startLiveBtn) {
+                    startLiveBtn.disabled = true;
+                    startLiveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+                }
+                showStatus('Initializing attendance session...', 'info');
+
+                // Start attendance session on server
+                const formData = new FormData();
+                formData.append('class_id', getSelectedClassId());
+                
+                const response = await fetch('/attendance/start_session', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to start session');
+                }
+
+                currentSessionId = data.session_id;
+                isSessionActive = true;
+                sessionStartTime = new Date();
+                recognizedStudents.clear();
+
+                showStatus('Session started successfully! Starting camera...', 'success');
+
+                // Start webcam
+                await startWebcam();
+
+                // Start polling for recognized students
+                startPolling();
+
+                // Start frame processing
+                startFrameProcessing();
+
+                // Update UI for live mode
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('cameraSection').classList.add('active');
+
+                // Show left panel components
+                document.getElementById('studentsSection').style.display = 'flex';
+                document.getElementById('saveSection').style.display = 'block';
+                document.getElementById('uploadSection').style.display = 'none';
+
+                showStatus('Live attendance is now active. Students will be recognized automatically.', 'success');
+
+                // Start status bar updates
+                startStatusBarUpdates();
+                
+            } catch (error) {
+                console.error('Error starting session:', error);
+                showStatus(`Error starting attendance session: ${error.message}`, 'error');
+
+                // Reset button state on error
+                const startLiveBtn = document.getElementById('startLiveBtn');
+                if (startLiveBtn) {
+                    startLiveBtn.disabled = false;
+                    startLiveBtn.innerHTML = '<i class="fas fa-play"></i> Start Live';
+                }
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 800 },
+                        height: { ideal: 600 },
+                        facingMode: 'user'
+                    } 
+                });
+                
+                videoStream = stream;
+                videoElement = document.getElementById('videoElement');
+                videoElement.srcObject = stream;
+                
+                // Wait for video to be ready
+                await new Promise((resolve) => {
+                    videoElement.onloadedmetadata = resolve;
+                });
+                
+            } catch (error) {
+                throw new Error(`Could not access camera: ${error.message}`);
+            }
+        }
+
+        function startPolling() {
+            pollingInterval = setInterval(async () => {
+                if (!isSessionActive || !currentSessionId) return;
+
+                try {
+                    const response = await fetch(`/attendance/poll_session?session_id=${currentSessionId}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Update recognized students list
+                        const newStudents = new Set(data.recognized_students || []);
+                        const hasNewStudents = newStudents.size > recognizedStudents.size;
+
+                        if (hasNewStudents) {
+                            recognizedStudents = newStudents;
+                            updateRecognizedList();
+                        }
+
+                        // Update status bar
+                        updateStatusBar();
+
+                    } else {
+                        console.error('Polling error:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Polling failed:', error);
+                }
+            }, 500); // Poll every 0.5 seconds
+        }
+
+        function startStatusBarUpdates() {
+            // Update status bar every second
+            setInterval(updateStatusBar, 1000);
+        }
+
+        function startFrameProcessing() {
+            if (!videoElement || !isSessionActive || processingFrames) return;
+            
+            processingFrames = true;
+            
+            const processFrame = async () => {
+                if (!isSessionActive || !currentSessionId || !videoElement) {
+                    processingFrames = false;
+                    return;
+                }
+                
+                try {
+                    // Create canvas and capture frame
+                    const canvas = document.createElement('canvas');
+                    canvas.width = videoElement.videoWidth;
+                    canvas.height = videoElement.videoHeight;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                    
+                    const frameData = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    // Send frame to server
+                    const formData = new FormData();
+                    formData.append('session_id', currentSessionId);
+                    formData.append('frame', frameData);
+                    
+                    const response = await fetch('/attendance/process_frame', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.recognized_in_frame && data.recognized_in_frame.length > 0) {
+                        console.log('Recognized in frame:', data.recognized_in_frame);
+                    }
+                    
+                } catch (error) {
+                    console.error('Frame processing error:', error);
+                }
+                
+                // Schedule next frame processing
+                if (isSessionActive) {
+                    setTimeout(processFrame, 300); // Process frame every 0.3 seconds
+                } else {
+                    processingFrames = false;
+                }
+            };
+            
+            // Start frame processing
+            processFrame();
+        }
+
+        function updateRecognizedList() {
+            const listElement = document.getElementById('recognizedList');
+            const container = document.getElementById('studentsSection');
+            listElement.innerHTML = '';
+
+            if (recognizedStudents.size > 0) {
+                container.style.display = 'block';
+
+                recognizedStudents.forEach(studentId => {
+                    const item = document.createElement('li');
+                    item.className = 'student-item';
+                    item.textContent = studentId;
+                    listElement.appendChild(item);
+                });
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        // Toast notification functions
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // Status bar functions
+        function updateStatusBar() {
+            const statusCard = document.getElementById('statusCard');
+            const statusContainer = document.getElementById('statusContainer');
+
+            if (!isSessionActive || !sessionStartTime) {
+                statusContainer.innerHTML = '';
+                return;
+            }
+
+            const now = new Date();
+            const duration = Math.floor((now - sessionStartTime) / 1000);
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+
+            const statusHTML = `
+                <div class="status-bar">
+                    <div class="status-item">
+                        <span class="status-dot"></span>
+                        <span>🟢 Live</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Faces Detected: ${recognizedStudents.size}</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Recognized: ${recognizedStudents.size}</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Duration: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</span>
+                    </div>
+                </div>
+            `;
+
+            statusContainer.innerHTML = statusHTML;
+        }
+
+        async function stopLiveAttendance() {
+            if (!currentSessionId || !isSessionActive) return;
+
+            try {
+                showStatus('Stopping attendance session...', 'info');
+
+                // Stop polling
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+
+                // Stop frame processing
+                processingFrames = false;
+
+                // Stop webcam
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                    videoStream = null;
+                }
+
+                // Stop session on server
+                const formData = new FormData();
+                formData.append('session_id', currentSessionId);
+
+                const response = await fetch('/attendance/stop_session', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast(`✅ Attendance Saved Successfully! Present students: ${data.count || 0}`);
+
+                    // Show detailed results
+                    setTimeout(() => {
+                        const studentList = data.recognized_students ? data.recognized_students.join(', ') : 'None';
+                        alert(`Attendance Session Completed!\n\nPresent Students: ${data.count || 0}\nStudents: ${studentList}`);
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Failed to stop session');
+                }
+
+            } catch (error) {
+                console.error('Error stopping session:', error);
+                showStatus(`Error stopping attendance session: ${error.message}`, 'error');
+            } finally {
+                resetUI();
+            }
+        }
+
+        function resetUI() {
+            isSessionActive = false;
+            currentSessionId = null;
+            sessionStartTime = null;
+            recognizedStudents.clear();
+
+            // Reset Start Live button
+            const startLiveBtn = document.getElementById('startLiveBtn');
+            if (startLiveBtn) {
+                startLiveBtn.style.display = 'block';
+                startLiveBtn.disabled = false;
+                startLiveBtn.innerHTML = '<i class="fas fa-play"></i> Start Live';
+            }
+
+            // Reset control buttons
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('cameraSection').classList.remove('active');
+
+            // Reset left panel sections
+            document.getElementById('studentsSection').style.display = 'none';
+            document.getElementById('saveSection').style.display = 'none';
+            document.getElementById('uploadSection').style.display = 'block';
+
+            // Clear polling
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+
+            // Stop frame processing
+            processingFrames = false;
+
+            // Clear status bar
+            updateStatusBar();
+        }
+
+        // Video Upload Functions
+        async function handleVideoUpload() {
+            if (!validateClassSelection()) return;
+            
+            try {
+                // Create file input for video upload
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'video/*';
+                fileInput.style.display = 'none';
+                
+                fileInput.addEventListener('change', async function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    // Validate file size (max 100MB)
+                    if (file.size > 100 * 1024 * 1024) {
+                        showStatus('Video file is too large. Please select a file smaller than 100MB.', 'error');
+                        return;
+                    }
+                    
+                    // Validate file type
+                    if (!file.type.startsWith('video/')) {
+                        showStatus('Please select a valid video file.', 'error');
+                        return;
+                    }
+                    
+                    await uploadVideo(file);
+                    document.body.removeChild(fileInput);
+                });
+                
+                document.body.appendChild(fileInput);
+                fileInput.click();
+                
+            } catch (error) {
+                showStatus(`Error handling video upload: ${error.message}`, 'error');
+            }
+        }
+
+        async function uploadVideo(file) {
+            try {
+                showStatus('Uploading and processing video...', 'info');
+                
+                const formData = new FormData();
+                formData.append('class', getSelectedClassId());
+                formData.append('video', file);
+                
+                const response = await fetch('/attendance/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Upload failed with status: ${response.status}`);
+                }
+                
+                const result = await response.text();
+                showStatus('Video processing completed successfully!', 'success');
+                
+                // Show results in a more user-friendly way
+                setTimeout(() => {
+                    alert('Video processing completed! Check the attendance records for results.');
+                }, 1000);
+                
+            } catch (error) {
+                showStatus(`Error uploading video: ${error.message}`, 'error');
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Live attendance buttons
+            document.getElementById('startLiveBtn').addEventListener('click', onStartLiveAttendance);
+
+            // Action buttons
+            document.getElementById('saveAttendanceBtn').addEventListener('click', saveCurrentAttendance);
+
+            // Video upload button
+            document.getElementById('uploadVideoBtn').addEventListener('click', handleVideoUpload);
+
+            // Class selection change
+            document.getElementById('classSelect').addEventListener('change', function() {
+                // Clear any existing status messages when class changes
+                document.getElementById('statusContainer').innerHTML = '';
+            });
+        });
+
+        // Action button functions
+        async function saveCurrentAttendance() {
+            if (!currentSessionId || !isSessionActive) {
+                showStatus('No active attendance session to save', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Saving attendance data...', 'info');
+
+                // Stop polling and frame processing
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+                processingFrames = false;
+
+                // Stop webcam
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                    videoStream = null;
+                }
+
+                // Stop session on server
+                const formData = new FormData();
+                formData.append('session_id', currentSessionId);
+
+                const response = await fetch('/attendance/stop_session', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const studentList = data.recognized_students ? data.recognized_students.join(', ') : 'None';
+                    showStatus(`Attendance saved successfully! Present students: ${data.count || 0}`, 'success');
+
+                    // Show detailed results
+                    setTimeout(() => {
+                        alert(`Attendance Session Completed!\n\nPresent Students: ${data.count || 0}\nStudents: ${studentList}`);
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Failed to save session');
+                }
+
+            } catch (error) {
+                console.error('Error saving attendance:', error);
+                showStatus(`Error saving attendance: ${error.message}`, 'error');
+            } finally {
+                resetUI();
+            }
+        }
+
+        async function markCurrentAttendance() {
+            if (!currentSessionId || !isSessionActive) {
+                showStatus('No active attendance session', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Marking current attendance...', 'info');
+
+                // Get current recognized students and mark them as present
+                const currentStudents = Array.from(recognizedStudents);
+
+                if (currentStudents.length === 0) {
+                    showStatus('No students recognized yet', 'warning');
+                    return;
+                }
+
+                // Send mark attendance request
+                const formData = new FormData();
+                formData.append('session_id', currentSessionId);
+                formData.append('students', JSON.stringify(currentStudents));
+
+                const response = await fetch('/attendance/mark_attendance', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast(`✅ Attendance Saved Successfully! Present students: ${data.count || 0}`);
+                    showStatus(`Marked ${currentStudents.length} students as present`, 'success');
+                    // Update the UI to reflect the changes
+                    updateRecognizedList();
+
+                    // Reset UI properly after a delay to allow user to see the success message
+                    setTimeout(() => {
+                        resetUI();
+                    }, 1500);
+                } else {
+                    throw new Error(data.error || 'Failed to mark attendance');
+                }
+
+            } catch (error) {
+                console.error('Error marking attendance:', error);
+                showStatus(`Error marking attendance: ${error.message}`, 'error');
+            }
+        }
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (isSessionActive && currentSessionId) {
+                // Send a quick request to stop the session
+                fetch('/attendance/stop_session', {
+                    method: 'POST',
+                    body: new FormData().append('session_id', currentSessionId),
+                    keepalive: true
+                }).catch(console.error);
+            }
+        });
+
+        // Theme Toggle
+        const themeToggle = document.querySelector('.theme-switch-checkbox');
+        const body = document.body;
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.remove('light');
+            body.classList.add('dark');
+            themeToggle.checked = true;
+        } else {
+            body.classList.remove('dark');
+            body.classList.add('light');
+            themeToggle.checked = false;
+        }
+        
+        // Toggle event
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@7.2.3/dist/gridstack-all.js"></script>
+    <script src="/static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

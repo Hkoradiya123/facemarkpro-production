@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Multi Login | FaceMark Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="light">
+  <div class="fade-overlay" id="fadeOverlay"></div>
+
+  <div class="theme-toggle-container">
+    <label class="theme-switch">
+      <input type="checkbox" class="theme-switch__checkbox">
+      <div class="theme-switch__container">
+        <div class="theme-switch__clouds"></div>
+        <div class="theme-switch__stars-container">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"></path>
+          </svg>
+        </div>
+        <div class="theme-switch__circle-container">
+          <div class="theme-switch__sun-moon-container">
+            <div class="theme-switch__moon">
+              <div class="theme-switch__spot"></div>
+              <div class="theme-switch__spot"></div>
+              <div class="theme-switch__spot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </label>
+  </div>
+
+  <div class="login-container multi anim-group">
+    <div class="brand-section">
+      <div class="brand anim-item">FaceMark Pro</div>
+      <h2 class="anim-item">Welcome Back!</h2>
+      <!-- <p class="welcome-text">Sign in to continue to your account</p> -->
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="error" style="margin-bottom: 12px;">
+        {% for category, message in messages %}
+        {{ message }}<br>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="login-section">
+      <div class="form-group anim-item" style="margin-bottom: 16px;">
+        <div class="role-toggle" id="roleToggle" data-active="faculty">
+          <div class="role-indicator"></div>
+          <button type="button" class="role-option" id="btnFaculty">Faculty</button>
+          <button type="button" class="role-option" id="btnStudent">Student</button>
+        </div>
+      </div>
+
+    <div id="facultyForm" class="fade-panel anim-item" style="display: block; opacity: 1;">
+      <h3 style="margin: 0 0 12px 0; font-size: 18px;">Faculty Login</h3>
+      <form method="post" action="/login?role=teacher" onsubmit="storeRememberMe()">
+        <div class="form-group">
+          <input type="text" name="faculty_email" id="faculty_email" placeholder="Email" required>
+        </div>
+        <div class="form-group" style="position: relative;">
+          <input type="password" name="password" id="password" placeholder="Password" required>
+          <span class="eye-icon" onclick="togglePassword()">👁</span>
+        </div>
+        <div class="remember">
+          <input type="checkbox" id="rememberMe"> Remember Me
+        </div>
+        <input type="submit" value="Login">
+      </form>
+    </div>
+
+    <div id="studentForm" class="fade-panel anim-item" style="display: none; opacity: 0;">
+      <h3 style="margin: 16px 0 12px 0; font-size: 18px;">Student Login</h3>
+      <form method="post" action="/student/login" onsubmit="storeStudentRememberMe()">
+        <div class="form-group">
+          <input type="text" class="form-control" id="roll_no" name="roll_no" placeholder="Roll Number" required>
+        </div>
+        <div class="form-group" style="position: relative;">
+          <input type="password" class="form-control" id="student_password" name="password" placeholder="Password" required>
+          <span class="eye-icon" onclick="toggleStudentPassword()">👁</span>
+        </div>
+        <div class="remember">
+          <input type="checkbox" id="rememberStudent"> Remember Me
+        </div>
+        <input type="submit" value="Login">
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    (function() {
+      var btnFaculty = document.getElementById('btnFaculty');
+      var btnStudent = document.getElementById('btnStudent');
+      var facultyForm = document.getElementById('facultyForm');
+      var studentForm = document.getElementById('studentForm');
+
+      function showFaculty() {
+        var roleToggle = document.getElementById('roleToggle');
+        if (roleToggle) roleToggle.dataset.active = 'faculty';
+        btnFaculty.classList.add('active');
+        btnStudent.classList.remove('active');
+
+        // fade switch
+        studentForm.style.opacity = 0;
+        setTimeout(function(){
+          studentForm.style.display = 'none';
+          facultyForm.style.display = 'block';
+          requestAnimationFrame(function(){
+            facultyForm.style.opacity = 1;
+          });
+        }, 180);
+      }
+
+      function showStudent() {
+        var roleToggle = document.getElementById('roleToggle');
+        if (roleToggle) roleToggle.dataset.active = 'student';
+        btnStudent.classList.add('active');
+        btnFaculty.classList.remove('active');
+
+        // fade switch
+        facultyForm.style.opacity = 0;
+        setTimeout(function(){
+          facultyForm.style.display = 'none';
+          studentForm.style.display = 'block';
+          requestAnimationFrame(function(){
+            studentForm.style.opacity = 1;
+          });
+        }, 180);
+      }
+
+      btnFaculty.addEventListener('click', showFaculty);
+      btnStudent.addEventListener('click', showStudent);
+      // mark initial active
+      btnFaculty.classList.add('active');
+
+      // Page load animations
+      function runPageLoadAnimations() {
+        document.body.classList.add('page-loaded');
+        var group = document.querySelector('.anim-group');
+        if (!group) return;
+        var items = group.querySelectorAll('.anim-item');
+        for (var i = 0; i < items.length; i++) {
+          items[i].style.transitionDelay = (200 + i * 100) + 'ms';
+          items[i].classList.add('in');
+        }
+      }
+
+      window.addEventListener('load', function() {
+        setTimeout(function(){
+          runPageLoadAnimations();
+        }, 220);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - {{ student_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #FF6B6B;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+            animation: backgroundColorCycle 40s ease-in-out infinite;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #357abd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+        }
+
+        .nav-menu {
+            margin-top: 30px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .welcome-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+            border: none;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Today's Classes */
+        .class-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .class-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .class-time {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .class-subject {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .class-faculty {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Attendance Progress */
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+        }
+
+        /* Recent Activity */
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-status {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-present {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-absent {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Subject Sliding Cards Animation */
+        .subject-sliding-container {
+            position: relative;
+            min-height: 200px;
+            padding: 0 0 66px 0;
+        }
+
+        .subject-sliding-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .subject-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subject-indicator.active {
+            background-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        .subject-sliding-cards {
+            position: relative;
+            height: 200px;
+            overflow: visible;
+        }
+
+        .subject-sliding-card {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease-in-out;
+        }
+
+        .subject-sliding-card.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .subject-sliding-card.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Today's Classes Card Specific Styles */
+        .todays-lecture-card-body {
+            padding: 20px;
+            padding-bottom: 20px !important;
+            min-height: 280px !important;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 15px;
+            margin: 10px;
+        }
+
+        /* Today's Classes Sliding Animation */
+        .lecture-sliding-container {
+            position: relative;
+            min-height: 200px;
+        }
+
+        .lecture-sliding-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .lecture-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lecture-indicator.active {
+            background-color: var(--primary-color);
+            transform: scale(1.3);
+        }
+
+        .lecture-sliding-cards {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .lecture-sliding-card {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease-in-out;
+        }
+
+        .lecture-sliding-card.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .lecture-sliding-card.prev {
+            transform: translateX(-100%);
+        }
+
+        .lecture-card-content {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            height: 170px;
+        }
+
+        .lecture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .lecture-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lecture-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+        }
+
+        .lecture-title {
+            margin: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .lecture-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .lecture-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .lecture-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .lecture-info i {
+            color: #6c757d;
+            width: 16px;
+        }
+
+        .lecture-time {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .lecture-time i {
+            color: var(--primary-color);
+        }
+
+        /* Weekly Attendance Chart Legend */
+        .weekly-legend {
+            padding: 15px;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .legend-color {
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Top Navigation Bar */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0 3rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .brand-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: absolute;
+            right: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .profile-avatar {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(142, 68, 173, 0.9));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, rgba(74, 144, 226, 1), rgba(142, 68, 173, 1));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hamburger-menu {
+            width: 45px;
+            height: 45px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: transform 0.2s ease;
+        }
+
+        .hamburger-menu:hover {
+            transform: scale(1.05);
+        }
+
+        .hamburger-menu span {
+            width: 25px;
+            height: 3px;
+            background: #2c3e50;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Navigation Drawer */
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 320px;
+            height: 100vh;
+            z-index: 2000;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .nav-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-drawer.open .drawer-overlay {
+            opacity: 1;
+        }
+
+        .drawer-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .nav-drawer.open .drawer-content {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .drawer-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .drawer-avatar {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .drawer-info h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .drawer-info p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .drawer-menu {
+            padding: 1rem 0;
+        }
+
+        .drawer-menu .nav-item {
+            margin: 0;
+        }
+
+        .drawer-menu .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            color: #2c3e50;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .drawer-menu .nav-link:hover,
+        .drawer-menu .nav-link.active {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+
+        .drawer-menu .nav-link i {
+            width: 20px;
+            font-size: 1.1rem;
+        }
+
+        /* Dashboard Sections - Full Viewport Height */
+        .dashboard-section {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Smooth background color transition - separate from content */
+        .dashboard-section {
+            transition: background 2s ease-in-out;
+        }
+
+        /* Content container - separate animation */
+        .section-container {
+            width: 100%;
+            max-width: none;
+            padding: 2rem 4rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* When section becomes active - content slides up */
+        .dashboard-section.active .section-container {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.3s;
+        }
+
+        /* Non-active sections - content stays hidden below */
+        .dashboard-section:not(.active) .section-container {
+            opacity: 0;
+            transform: translateY(100px);
+        }
+
+        /* Section Theme - UNIFIED BACKGROUND WITH ROTATING CIRCLE SYSTEM */
+        
+        /* All sections transparent to show body background */
+        .section-1,
+        .section-2,
+        .section-3,
+        .section-4 {
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        @keyframes backgroundColorCycle {
+            0%, 100% { background-color: #FF6B6B; }
+            25% { background-color: #9B59B6; }
+            50% { background-color: #3498DB; }
+            75% { background-color: #1ABC9C; }
+        }
+
+
+
+        /* Remove ::before from sections */
+        .section-1::before,
+        .section-2::before,
+        .section-3::before,
+        .section-4::before {
+            display: none;
+        }
+
+        /* Arc-based gradient overlay from circle center */
+        .section-1::after,
+        .section-2::after,
+        .section-3::after,
+        .section-4::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at 100% 50%,
+                transparent 0%,
+                rgba(0, 0, 0, 0.15) 100%
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Section Container */
+        /* Removed - already defined above with separate animation */
+
+        /* 3D Depth Layers - Removed to avoid conflict with ::after */
+        /* Background overlay is now handled by section ::after for geometric pattern */
+
+        /* Floating Particles Background */
+        .dashboard-section {
+            background-size: 400% 400%;
+        }
+
+        /* Active section - smooth background animation */
+        .dashboard-section.active {
+            animation: none;
+        }
+
+        /* Section Header */
+        .section-header {
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+
+        .section-header h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 
+                0 4px 20px rgba(0,0,0,0.3),
+                0 0 40px rgba(255,255,255,0.2);
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.95);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Stats Grid - Section 1 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
+            backdrop-filter: blur(25px) saturate(200%);
+            border-radius: 24px;
+            padding: 2.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+            position: relative;
+            transform-style: preserve-3d;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(-25%, -25%) scale(1); }
+            50% { transform: translate(-30%, -30%) scale(1.1); }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-15px) translateZ(30px) rotateX(5deg);
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.35),
+                0 0 40px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.8) 0%, 
+                rgba(255,255,255,0.4) 50%, 
+                rgba(255,255,255,0.8) 100%);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: iconShine 3s ease-in-out infinite;
+        }
+
+        @keyframes iconShine {
+            0%, 100% { transform: translateX(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                0 12px 30px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-content {
+            flex: 1;
+            width: 100%;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2c3e50;
+            line-height: 1;
+            text-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #34495e;
+            margin-top: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Dual Cards Container - Section 2 */
+        .dual-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 3rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .content-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.15) 100%);
+            backdrop-filter: blur(30px) saturate(220%);
+            border-radius: 28px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.25),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding-bottom: 25px;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .content-card:hover::before {
+            left: 100%;
+        }
+
+        .content-card:hover {
+            transform: translateY(-12px) translateZ(25px) rotateY(2deg);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(255, 255, 255, 0.15),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .card-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.3));
+            transition: width 0.5s ease;
+        }
+
+        .content-card:hover .card-header::after {
+            width: 100%;
+        }
+
+        .card-header h3 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 15px;
+            min-height: 300px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Chart Container - Sections 3 & 4 */
+        .chart-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .chart-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
+            backdrop-filter: blur(35px) saturate(220%);
+            border-radius: 32px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 15px 50px rgba(0, 0, 0, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                rgba(255,255,255,0.15) 90deg,
+                transparent 180deg
+            );
+            animation: chartRotate 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        @keyframes chartRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chart-card:hover::before {
+            opacity: 1;
+        }
+
+        .chart-card.pie-chart-card {
+            transform: scale(0.8);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .horizontal-layout {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .horizontal-layout .pie-chart-container {
+            flex: 1;
+        }
+
+        .horizontal-layout .chart-summary {
+            flex: 0 0 auto;
+            min-width: 200px;
+        }
+
+        .pie-chart-container, .line-chart-container {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .chart-summary {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+        }
+
+        /* Weekly Legend */
+        .weekly-legend {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            margin-top: 1rem;
+        }
+
+        /* Enhanced Glassmorphism Effects */
+        /* Removed old ::before styles as they're now in individual card styles */
+
+        /* Remove bottom padding for last section to eliminate blank space */
+        .dashboard-section:last-child .section-container {
+            padding-bottom: 0;
+        }
+
+        /* Active section highlighting */
+        .dashboard-section.active {
+            z-index: 10;
+        }
+
+        /* Fade effect for non-active sections */
+        .dashboard-section:not(.active) .section-container {
+            opacity: 0.3;
+            transform: translateY(20px) scale(0.95);
+        }
+
+        /* Parallax depth effect on scroll */
+        .dashboard-section:not(.active) {
+            filter: none;
+            transform: none;
+        }
+
+        .dashboard-section.active {
+            filter: none;
+            transform: none;
+        }
+
+        /* Staggered animation for cards - REPLACED WITH CIRCULAR PATH ANIMATIONS */
+        
+        /* Dot Entry/Exit Animations on Circular Path */
+        
+        /* Card Entry: Dot from circle (6 o'clock) → Expand to Card */
+        @keyframes cardEntryFromCircle {
+            0% {
+                opacity: 0;
+                transform: translate(calc(100vw - 22.5vh), 50vh) scale(0);
+                clip-path: circle(0% at 50% 50%);
+            }
+            30% {
+                opacity: 1;
+                transform: translate(calc(100vw - 22.5vh), 50vh) scale(0.05);
+                clip-path: circle(5% at 50% 50%);
+            }
+            60% {
+                transform: translate(50%, 50%) scale(0.5);
+                clip-path: circle(30% at 50% 50%);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+                clip-path: circle(100% at 50% 50%);
+            }
+        }
+
+        /* Card Exit: Card → Shrink to Dot → Exit via circle (11-12 o'clock) */
+        @keyframes cardExitToCircle {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+                clip-path: circle(100% at 50% 50%);
+            }
+            40% {
+                transform: translate(50%, -30%) scale(0.5);
+                clip-path: circle(30% at 50% 50%);
+            }
+            70% {
+                opacity: 1;
+                transform: translate(calc(100vw - 22.5vh), -45vh) scale(0.05);
+                clip-path: circle(5% at 50% 50%);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(100vw - 22.5vh), -45vh) scale(0);
+                clip-path: circle(0% at 50% 50%);
+            }
+        }
+
+        /* Apply animations to cards based on section timing */
+        .stat-card,
+        .content-card,
+        .chart-card {
+            animation: cardEntryFromCircle 2s ease-out forwards;
+            transform-origin: center center;
+        }
+
+        .stat-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        .content-card:nth-child(1) {
+            animation-delay: 0.3s;
+        }
+
+        .content-card:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .section-container {
+                padding: 2rem 3rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                max-width: 1000px;
+            }
+
+            .dual-cards-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                max-width: 900px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section-container {
+                padding: 1.5rem 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .dual-cards-container {
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-container {
+                padding: 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .loader-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            backdrop-filter: blur(10px);
+            animation: logoFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+        }
+
+        .loader-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-progress {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0.8));
+            border-radius: 10px;
+            animation: progressLoad 2s ease-in-out forwards;
+        }
+
+        @keyframes progressLoad {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        .loader-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .loader-dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: dotBounce 1.4s ease-in-out infinite;
+        }
+
+        .loader-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .loader-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loader-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotBounce {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* Dashboard fade-in animation */
+        .dashboard-content {
+            opacity: 0;
+            animation: dashboardFadeIn 0.8s ease-out 2.2s forwards;
+        }
+
+        @keyframes dashboardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Smooth Scroll Enhancements */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        /* Removed - scrollbar is now hidden */
+
+        /* Parallax Effect for Sections */
+        .dashboard-section {
+            will-change: transform;
+        }
+
+        /* Floating Shapes for Background */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .shape.circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .shape.square {
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.5);
+            transform: rotate(45deg);
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 35px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .shape.star {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.6);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { transform: translateY(80vh) translateX(10vw) rotate(45deg) scale(0.8); opacity: 0.3; }
+            25% { transform: translateY(60vh) translateX(-5vw) rotate(90deg) scale(1); opacity: 0.5; }
+            40% { transform: translateY(40vh) translateX(15vw) rotate(135deg) scale(0.9); opacity: 0.4; }
+            55% { transform: translateY(20vh) translateX(-10vw) rotate(180deg) scale(1.1); opacity: 0.6; }
+            70% { transform: translateY(10vh) translateX(20vw) rotate(225deg) scale(0.8); opacity: 0.3; }
+            85% { transform: translateY(-5vh) translateX(-15vw) rotate(270deg) scale(1); opacity: 0.2; }
+            100% { transform: translateY(-100px) translateX(100vw) rotate(360deg) scale(0.5); opacity: 0; }
+        }
+
+        .shape:nth-child(1) { animation-delay: 0s; left: 5%; }
+        .shape:nth-child(2) { animation-delay: -4s; left: 10%; }
+        .shape:nth-child(3) { animation-delay: -8s; left: 15%; }
+        .shape:nth-child(4) { animation-delay: -12s; left: 20%; }
+        .shape:nth-child(5) { animation-delay: -16s; left: 25%; }
+        .shape:nth-child(6) { animation-delay: -20s; left: 30%; }
+        .shape:nth-child(7) { animation-delay: -24s; left: 35%; }
+        .shape:nth-child(8) { animation-delay: -28s; left: 40%; }
+        .shape:nth-child(9) { animation-delay: -32s; left: 45%; }
+        .shape:nth-child(10) { animation-delay: -36s; left: 50%; }
+        .shape:nth-child(11) { animation-delay: -40s; left: 55%; }
+        .shape:nth-child(12) { animation-delay: -44s; left: 60%; }
+        .shape:nth-child(13) { animation-delay: -48s; left: 65%; }
+        .shape:nth-child(14) { animation-delay: -52s; left: 70%; }
+        .shape:nth-child(15) { animation-delay: -56s; left: 75%; }
+        .shape:nth-child(16) { animation-delay: -60s; left: 80%; }
+        .shape:nth-child(17) { animation-delay: -64s; left: 85%; }
+        .shape:nth-child(18) { animation-delay: -68s; left: 90%; }
+        .shape:nth-child(19) { animation-delay: -72s; left: 95%; }
+        .shape:nth-child(20) { animation-delay: -76s; left: 100%; }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-container">
+            <div class="loader-logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="loader-text">Loading Dashboard...</div>
+            <div class="loader-spinner"></div>
+            <div class="loader-progress">
+                <div class="loader-progress-bar"></div>
+            </div>
+            <div class="loader-dots">
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Fixed Profile Avatar -->
+    <a href="/student/profile" class="profile-avatar">
+        <i class="fas fa-user-circle"></i>
+    </a>
+
+    <!-- Floating Background Shapes -->
+    <div class="floating-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape star"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape star"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape star"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape star"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape star"></div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+        <!-- Main Content -->
+        <!-- Section 1: Overview Stats -->
+        <section class="dashboard-section section-1" id="section1">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Attendance Overview</h2>
+                    <p>Your academic performance at a glance</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ overall_percentage }}%</div>
+                            <div class="stat-label">Overall Attendance</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ today_classes|length }}</div>
+                            <div class="stat-label">Today's Classes</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ attendance_stats|length }}</div>
+                            <div class="stat-label">Total Subjects</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ recent_attendance|length }}</div>
+                            <div class="stat-label">Recent Records</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Classes & Subject Details -->
+        <section class="dashboard-section section-2" id="section2">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Today's Schedule & Performance</h2>
+                    <p>Current classes and subject-wise attendance breakdown</p>
+                </div>
+                <div class="dual-cards-container">
+                    <!-- Today's Classes -->
+                    <div class="content-card">
+                        <div class="card-body todays-lecture-card-body">
+                            {% if today_classes %}
+                                <div class="lecture-sliding-container">
+                                    <div class="lecture-sliding-cards">
+                                        {% for class in today_classes %}
+                                            <div class="lecture-sliding-card {% if loop.first %}active{% endif %}" data-class="{{ loop.index }}">
+                                                <div class="lecture-card-content">
+                                                    <div class="lecture-header">
+                                                        <div class="lecture-status">
+                                                            <span class="lecture-dot current"></span>
+                                                            <h6 class="lecture-title">{{ class.subject }}</h6>
+                                                        </div>
+                                                        <span class="lecture-tag">
+                                                            {% if loop.first %}
+                                                                Current
+                                                            {% elif loop.index == 2 %}
+                                                                Next
+                                                            {% else %}
+                                                                Class {{ loop.index }}
+                                                            {% endif %}
+                                                        </span>
+                                                    </div>
+                                                    <div class="lecture-details">
+                                                        <div class="lecture-info">
+                                                            <i class="fas fa-user-tie"></i>
+                                                            <span>{{ class.faculty_name }}</span>
+                                                        </div>
+                                                        <div class="lecture-info">
+                                                            <i class="fas fa-door-open"></i>
+                                                            <span>{{ class.classroom }}</span>
+                                                        </div>
+                                                        <div class="lecture-time">
+                                                            <i class="fas fa-clock"></i>
+                                                            <span>{{ class.start_time }} - {{ class.end_time }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                                    <p>No classes scheduled for today</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Subject-wise Attendance -->
+                    <div class="content-card">
+                        <div class="card-body subject-attendance-card-body">
+                            <div class="subject-sliding-container">
+                                <div class="subject-sliding-cards">
+                                    {% for subject in timetable_subjects %}
+                                        {% set stats = attendance_stats.get(subject, {}) %}
+                                        <div class="subject-sliding-card {% if loop.first %}active{% endif %}" data-subject="{{ subject }}">
+                                            <div class="card border-0 bg-light h-100">
+                                                <div class="card-body text-center d-flex flex-column justify-content-center">
+                                                    <h6 class="card-title mb-3">{{ subject }}</h6>
+                                                    <div class="d-flex justify-content-around align-items-center mb-2">
+                                                        <div class="text-success">
+                                                            <i class="fas fa-check-circle fa-lg"></i>
+                                                            <div class="fw-bold">{{ stats.present | default(0) }}</div>
+                                                            <small>Present</small>
+                                                        </div>
+                                                        <div class="text-muted">
+                                                            <div class="fw-bold">{{ stats.total | default(0) }}</div>
+                                                            <small>Total</small>
+                                                        </div>
+                                                        <div class="text-danger">
+                                                            <i class="fas fa-times-circle fa-lg"></i>
+                                                            <div class="fw-bold">{{ (stats.total | default(0)) - (stats.present | default(0)) }}</div>
+                                                            <small>Absent</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="progress mb-2" style="height: 8px;">
+                                                        <div class="progress-bar bg-success" style="width: {{ (stats.present / stats.total * 100) if stats.total and stats.total > 0 else 0 }}%"></div>
+                                                    </div>
+                                                    <small class="text-muted">
+                                                        {{ "%.1f"|format(stats.percentage if stats.percentage else 0) }}% Attendance
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if not timetable_subjects %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                                    <p>No subjects found in timetable</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Weekly Chart -->
+        <section class="dashboard-section section-3" id="section3">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Weekly Performance</h2>
+                    <p>Subject-wise attendance breakdown for this week</p>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-card pie-chart-card">
+                        <div class="card-body">
+                            <div class="horizontal-layout">
+                                <div class="pie-chart-container">
+                                    <canvas id="weeklyAttendanceChart" width="400" height="480"></canvas>
+                                </div>
+                                <div class="chart-summary">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="text-success">
+                                                <i class="fas fa-check-circle fa-2x"></i>
+                                                <div class="fw-bold" id="totalPresent">{{ overall_stats.total_present }}</div>
+                                                <small>Total Present</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-danger">
+                                                <i class="fas fa-times-circle fa-2x"></i>
+                                                <div class="fw-bold" id="totalAbsent">{{ overall_stats.total_absent }}</div>
+                                                <small>Total Absent</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Monthly Trend -->
+        <section class="dashboard-section section-4" id="section4">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Monthly Trends</h2>
+                    <p>Attendance patterns and progress over time</p>
+                </div>
+                <div class="chart-container" style="padding: 0; max-width: none; width: 50%;">
+                    <div class="line-chart-container" style="width: 100%; height: 440px; padding: 2rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%); border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 32px; backdrop-filter: blur(35px) saturate(220%); box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);">
+                        <canvas id="monthlyChart" width="100%" height="440"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Weekly Attendance Pie Chart with Fake Data
+        const fakeWeeklyData = {
+            "Math": { present: 8, total: 10 },
+            "Science": { present: 6, total: 10 },
+            "English": { present: 9, total: 10 },
+            "History": { present: 7, total: 10 }
+        };
+        const pieCtx = document.getElementById('weeklyAttendanceChart').getContext('2d');
+        const labels = Object.keys(fakeWeeklyData);
+        const presentData = labels.map(subject => fakeWeeklyData[subject].present);
+        const absentData = labels.map(subject => fakeWeeklyData[subject].total - fakeWeeklyData[subject].present);
+
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Present',
+                    data: presentData,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+                    borderWidth: 2
+                }, {
+                    label: 'Absent',
+                    data: absentData,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'].map(color => color + '80'),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Monthly Trend Chart with Fake Data
+        const fakeMonthlyData = {
+            "Jan": 15,
+            "Feb": 18,
+            "Mar": 20,
+            "Apr": 22,
+            "May": 19,
+            "Jun": 25
+        };
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(fakeMonthlyData),
+                datasets: [{
+                    label: 'Attendance Count',
+                    data: Object.values(fakeMonthlyData),
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255, 107, 107, 0.2)',
+                    borderWidth: 5,
+                    pointBackgroundColor: '#ff6b6b',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#000',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#000',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            stepSize: 10
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Drawer Navigation System
+        function initializeDrawer() {
+            const hamburgerMenu = document.getElementById('hamburgerMenu');
+            const navDrawer = document.getElementById('navDrawer');
+            const drawerOverlay = document.getElementById('drawerOverlay');
+
+            function openDrawer() {
+                navDrawer.classList.add('open');
+                hamburgerMenu.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDrawer() {
+                navDrawer.classList.remove('open');
+                hamburgerMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // Event listeners
+            hamburgerMenu.addEventListener('click', openDrawer);
+            drawerOverlay.addEventListener('click', closeDrawer);
+
+            // Close drawer when clicking on nav links
+            const navLinks = document.querySelectorAll('.drawer-menu .nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', closeDrawer);
+            });
+
+            // Close drawer on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && navDrawer.classList.contains('open')) {
+                    closeDrawer();
+                }
+            });
+        }
+
+        // Enhanced Scroll Animation System with One-Touch Trigger (Single Section Jump)
+        function initializeScrollAnimations() {
+            const sections = document.querySelectorAll('.dashboard-section');
+            let currentSection = 0;
+            let isScrolling = false;
+            let touchStartY = 0;
+            let scrollThreshold = 50; // Minimum pixels to trigger section change
+            let canScroll = true; // Prevents multiple rapid scrolls
+
+            // Intersection Observer for section detection
+            const observerOptions = {
+                threshold: 0.5,
+                rootMargin: '0px'
+            };
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const sectionIndex = Array.from(sections).indexOf(entry.target);
+                        activateSection(sectionIndex);
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => sectionObserver.observe(section));
+
+            function activateSection(index) {
+                sections.forEach((section, i) => {
+                    section.classList.toggle('active', i === index);
+                });
+                currentSection = index;
+            }
+
+            function scrollToSection(index) {
+                if (index >= 0 && index < sections.length && !isScrolling && canScroll) {
+                    isScrolling = true;
+                    canScroll = false;
+                    
+                    sections[index].scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    setTimeout(() => {
+                        isScrolling = false;
+                        activateSection(index);
+                    }, 1000);
+
+                    // Re-enable scrolling after animation completes
+                    setTimeout(() => {
+                        canScroll = true;
+                    }, 1200); // Slightly longer than animation to prevent rapid scrolling
+                }
+            }
+
+            // Mouse wheel event - ONLY ONE section at a time
+            let scrollAccumulator = 0;
+            let scrollTimeout;
+            let lastScrollDirection = 0;
+
+            window.addEventListener('wheel', (e) => {
+                stopAutoScroll();
+                if (!canScroll || isScrolling) {
+                    e.preventDefault();
+                    return;
+                }
+
+                const direction = e.deltaY > 0 ? 1 : -1;
+                scrollAccumulator += Math.abs(e.deltaY);
+
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    scrollAccumulator = 0;
+                }, 200);
+
+                // Trigger ONLY ONE section change regardless of scroll intensity
+                if (scrollAccumulator > scrollThreshold) {
+                    if (direction > 0 && currentSection < sections.length - 1) {
+                        scrollToSection(currentSection + 1);
+                    } else if (direction < 0 && currentSection > 0) {
+                        scrollToSection(currentSection - 1);
+                    }
+                    scrollAccumulator = 0; // Reset immediately
+                }
+                // Resume auto-scroll after 10 seconds of inactivity
+                setTimeout(startAutoScroll, 10000);
+            }, { passive: false });
+
+            // Trackpad/Touch events - ONLY ONE section at a time
+            window.addEventListener('touchstart', (e) => {
+                stopAutoScroll();
+                if (!canScroll) return;
+                touchStartY = e.touches[0].clientY;
+                setTimeout(startAutoScroll, 10000);
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!canScroll || isScrolling) return;
+
+                const touchEndY = e.touches[0].clientY;
+                const deltaY = touchStartY - touchEndY;
+
+                // Trigger ONLY ONE section change
+                if (Math.abs(deltaY) > scrollThreshold) {
+                    if (deltaY > 0 && currentSection < sections.length - 1) {
+                        scrollToSection(currentSection + 1);
+                    } else if (deltaY < 0 && currentSection > 0) {
+                        scrollToSection(currentSection - 1);
+                    }
+                }
+            }, { passive: true });
+
+            // Keyboard navigation - Arrow keys (ONLY ONE section)
+            document.addEventListener('keydown', (e) => {
+                stopAutoScroll();
+                if (!canScroll || isScrolling) return;
+
+                if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                    e.preventDefault();
+                    if (currentSection < sections.length - 1) {
+                        scrollToSection(currentSection + 1);
+                    }
+                } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                    e.preventDefault();
+                    if (currentSection > 0) {
+                        scrollToSection(currentSection - 1);
+                    }
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    scrollToSection(0);
+                } else if (e.key === 'End') {
+                    e.preventDefault();
+                    scrollToSection(sections.length - 1);
+                }
+                // Resume auto-scroll after 10 seconds of inactivity
+                setTimeout(startAutoScroll, 10000);
+            });
+
+            // Prevent default scroll behavior during animation
+            window.addEventListener('scroll', (e) => {
+                if (isScrolling) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            let autoScrollInterval = null;
+            const autoScrollDelay = 8000; // 8 seconds per section
+
+            function startAutoScroll() {
+                if (autoScrollInterval) clearInterval(autoScrollInterval);
+                autoScrollInterval = setInterval(() => {
+                    if (currentSection < sections.length - 1) {
+                        scrollToSection(currentSection + 1);
+                    } else {
+                        scrollToSection(0); // Loop back to first section
+                    }
+                }, autoScrollDelay);
+            }
+
+            function stopAutoScroll() {
+                if (autoScrollInterval) {
+                    clearInterval(autoScrollInterval);
+                    autoScrollInterval = null;
+                }
+            }
+
+            // Start auto-scroll initially
+            startAutoScroll();
+        }
+
+        // Subject Sliding Cards Animation
+        function initializeSubjectSlidingAnimation() {
+            const container = document.querySelector('.subject-sliding-container');
+            if (!container) return;
+
+            const cards = container.querySelectorAll('.subject-sliding-card');
+
+            if (cards.length <= 1) return; // No need to animate if only one card
+
+            let currentIndex = 0;
+            let animationInterval = null;
+
+            function showCard(index) {
+                // Remove active class from all cards
+                cards.forEach((card, i) => {
+                    card.classList.remove('active', 'prev');
+                    if (i < index) {
+                        card.classList.add('prev');
+                    }
+                });
+
+                // Add active class to current card
+                if (cards[index]) {
+                    cards[index].classList.add('active');
+                }
+            }
+
+            function nextCard() {
+                currentIndex = (currentIndex + 1) % cards.length;
+                showCard(currentIndex);
+            }
+
+            function startAnimation() {
+                // Show first card
+                showCard(0);
+                // Clear any previous interval to avoid multiple intervals
+                if (animationInterval) clearInterval(animationInterval);
+                // Start alternating every 4 seconds
+                animationInterval = setInterval(nextCard, 4000);
+            }
+
+            // Initialize the animation
+            startAnimation();
+
+            // Pause animation on hover
+            container.addEventListener('mouseenter', () => {
+                if (animationInterval) clearInterval(animationInterval);
+            });
+
+            // Resume animation on mouse leave
+            container.addEventListener('mouseleave', () => {
+                if (animationInterval) clearInterval(animationInterval);
+                animationInterval = setInterval(nextCard, 4000);
+            });
+        }
+
+        // Today's Classes Sliding Animation
+        function initializeLectureSlidingAnimation() {
+            const container = document.querySelector('.lecture-sliding-container');
+            if (!container) return;
+
+            const cards = container.querySelectorAll('.lecture-sliding-card');
+
+            if (cards.length <= 1) return; // No need to animate if only one card
+
+            let currentIndex = 0;
+            let animationInterval = null;
+
+            function showCard(index) {
+                // Remove active class from all cards
+                cards.forEach((card, i) => {
+                    card.classList.remove('active', 'prev');
+                    if (i < index) {
+                        card.classList.add('prev');
+                    }
+                });
+
+                // Add active class to current card
+                if (cards[index]) {
+                    cards[index].classList.add('active');
+                }
+            }
+
+            function nextCard() {
+                currentIndex = (currentIndex + 1) % cards.length;
+                showCard(currentIndex);
+            }
+
+            function startAnimation() {
+                // Show first card
+                showCard(0);
+                // Clear any previous interval to avoid multiple intervals
+                if (animationInterval) clearInterval(animationInterval);
+                // Start alternating every 5 seconds
+                animationInterval = setInterval(nextCard, 5000);
+            }
+
+            // Initialize the animation
+            startAnimation();
+
+            // Pause animation on hover
+            container.addEventListener('mouseenter', () => {
+                if (animationInterval) clearInterval(animationInterval);
+            });
+
+            // Resume animation on mouse leave
+            container.addEventListener('mouseleave', () => {
+                if (animationInterval) clearInterval(animationInterval);
+                animationInterval = setInterval(nextCard, 5000);
+            });
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide loading screen after 2 seconds
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                }
+            }, 2000);
+
+            // Initialize dashboard animations
+            initializeScrollAnimations();
+            initializeSubjectSlidingAnimation();
+            initializeLectureSlidingAnimation();
+        });
+    </script>
+</div>
+</body>
+</html>
